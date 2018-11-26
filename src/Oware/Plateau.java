@@ -1,3 +1,5 @@
+package Oware;
+
 public class Plateau {
 
     private int nbrTrou = 12;

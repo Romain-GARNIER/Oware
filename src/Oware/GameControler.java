@@ -1,3 +1,5 @@
+package Oware;
+
 public class GameControler {
     boolean computer_player_one;
 

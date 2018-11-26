@@ -1,3 +1,6 @@
+package Oware;
+
+
 public class MinMax {
 
 
@@ -27,7 +30,7 @@ public class MinMax {
                 else tab_values[i]=+100;
             }
         }
-        int res;
+        int res = 0;
         if (computer_play){
             // WRITE the code: res contains the MAX of tab_values
         } else {

@@ -1,3 +1,5 @@
+package Oware;
+
 public class Joueur {
 
     private int grainePossedees;

@@ -1,3 +1,5 @@
+package Oware;
+
 class Position {
     int cells_player[] = new int[12]; // each cell contains a certain number of seeds
     int cells_computer[] = new int[12];
