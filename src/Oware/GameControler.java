@@ -21,6 +21,7 @@ public class GameControler {
         return plateau[move] != 0;
     }
 
+    // Joue le coup avec une prise simple sans s'occuper de la continuité
     public static void playMove(Position pos_next, Position pos_current,boolean computer_play, int move){
         pos_next = pos_current.clone();
         int[] plateau1,plateau2;
@@ -35,7 +36,7 @@ public class GameControler {
             plateau2 = pos_current.cells_computer.clone();
         }
 
-        nbSeed = plateau1[move-1];
+        nbSeed = plateau1[move];
         position = move+1;
 
         for(int i=0;i<nbSeed;i++){
@@ -47,13 +48,13 @@ public class GameControler {
                 // si on revient sur la position de départ, on ne met pas de graine dedans
                 if(holePosition == move)
                     holePosition++;
-                plateau1[holePosition-1]++;
+                plateau1[holePosition]++;
             }
             else{
                 plateau2[holePosition-1]++;
-                if(plateau2[holePosition-1] < 3){
+                if(plateau2[holePosition] == 3 || plateau2[holePosition] == 2){
                     nbCapturedSeed += plateau2[holePosition-1];
-                    plateau2[holePosition-1] = 0;
+                    plateau2[holePosition] = 0;
                 }
             }
         }
