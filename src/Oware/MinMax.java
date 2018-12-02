@@ -3,8 +3,11 @@ package Oware;
 public class MinMax {
 
     int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
+        System.out.println("depth : "+depth);
+        System.out.println("computer : "+computer_play);
+        System.out.println(pos_current.toString(true));
         // computer_play is true if the computer has to play and false otherwise
-        int[] tab_values = new int[12];
+        int[] tab_values = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast
         if (GameControler.finalPosition(pos_current, computer_play, depth)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
@@ -26,7 +29,7 @@ public class MinMax {
             if (GameControler.validMove(pos_current, computer_play,i)){
                 // WRITE function playMove(&pos_next,pos_current, computer_play,i)
                 // we play the move i from pos_current and obtain the new position pos_next
-                GameControler.playMove(pos_next,pos_current, computer_play,i);
+                pos_next = GameControler.playMove(pos_current, computer_play,i);
                 // pos_next is the new current poisition and we change the player
                 tab_values[i]=minMaxValue(pos_next,!computer_play,depth+1,depthMax);
             } else {

@@ -22,11 +22,12 @@ public class GameControler {
     }
 
     // Joue le coup avec une prise simple sans s'occuper de la continuité
-    public static void playMove(Position pos_next, Position pos_current,boolean computer_play, int move){
-        pos_next = pos_current.clone();
+    public static Position playMove(Position pos_current,boolean computer_play, int move){
+        Position pos_next = pos_current.clone();
         int[] plateau1,plateau2;
         int nbSeed, position;
         int nbCapturedSeed = 0;
+        int holeStart;
         if(computer_play){
             plateau1 = pos_current.cells_computer.clone();
             plateau2 = pos_current.cells_player.clone();
@@ -37,23 +38,25 @@ public class GameControler {
         }
 
         nbSeed = plateau1[move];
-        position = move+1;
+        plateau1[move] = 0;
+        holeStart = move+1;
 
         for(int i=0;i<nbSeed;i++){
-            position += i;
+            position = holeStart + i;
             // position du trou sur un camp (varie entre 1 et 6)
             int holePosition = position%6;
             // renvoi vrai si le reste de la division est paire (pour choisir le camp)
-            if((position/6)%2 == 0){
+            int tmp = (position/6)%2;
+            if(tmp == 0){
                 // si on revient sur la position de départ, on ne met pas de graine dedans
                 if(holePosition == move)
                     holePosition++;
                 plateau1[holePosition]++;
             }
             else{
-                plateau2[holePosition-1]++;
+                plateau2[holePosition]++;
                 if(plateau2[holePosition] == 3 || plateau2[holePosition] == 2){
-                    nbCapturedSeed += plateau2[holePosition-1];
+                    nbCapturedSeed += plateau2[holePosition];
                     plateau2[holePosition] = 0;
                 }
             }
@@ -69,14 +72,18 @@ public class GameControler {
             pos_next.cells_computer = plateau2;
             pos_next.seeds_player += nbCapturedSeed;
         }
+        return pos_next;
     }
 
     public static boolean finalPosition(Position pos, boolean computer_play, int depth){
+        int sum1, sum2;
+        sum1 = 0;
+        sum2 = 0;
         for(int i=0;i<6;i++){
-            if(pos.cells_computer[i] > 0 || pos.cells_player[i] > 0)
-                return false;
+            sum1 += pos.cells_computer[i];
+            sum2 += pos.cells_player[i];
         }
-        return true;
+        return sum1 == 0 || sum2 == 0;
     }
 
     public static int evaluation(Position pos, boolean computer_play, int depth){
