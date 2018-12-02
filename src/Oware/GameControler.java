@@ -87,9 +87,9 @@ public class GameControler {
     }
 
     public static int evaluation(Position pos, boolean computer_play, int depth){
-        if(computer_play){
+//        if(computer_play){
             return pos.seeds_computer - pos.seeds_player;
-        }
-        return pos.seeds_player - pos.seeds_computer;
+//        }
+//        return pos.seeds_player - pos.seeds_computer;
     }
 }

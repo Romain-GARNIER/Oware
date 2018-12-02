@@ -19,7 +19,9 @@ public class MinMax {
                 return 0;
         }
         if (depth == depthMax) {
-            return GameControler.evaluation(pos_current, computer_play, depth);
+            int evaluation = GameControler.evaluation(pos_current, computer_play, depth);
+            System.out.println("evaluation : "+evaluation+"\n");
+            return evaluation;
             // the simplest evealution fucntion is the difference of the taken seeds
         }
         for(int i=0;i<6;i++){ // /!\ Question : on essaie de faire 6 coups (parcourt du camp) ou 12 coups (parcourt du plateau) ?
@@ -37,7 +39,7 @@ public class MinMax {
                 else tab_values[i]=+100;
             }
         }
-        int res = 0;
+        int res = tab_values[0];
         if (computer_play){
             // WRITE the code: res contains the MAX of tab_values
             for(int i=0;i<tab_values.length;i++){
@@ -52,6 +54,14 @@ public class MinMax {
                     res = tab_values[i];
             }
         }
+        System.out.println("-------");
+        String str_tab = "";
+        for(int i=0;i<tab_values.length;i++){
+            str_tab+="["+tab_values[i]+"]";
+        }
+        System.out.println("tab value : "+str_tab);
+        System.out.println("res : "+res);
+        System.out.println("-------\n");
         return res;
     }
 
