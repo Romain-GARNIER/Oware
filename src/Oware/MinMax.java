@@ -1,5 +1,7 @@
 package Oware;
 
+import java.util.Hashtable;
+
 public class MinMax {
 
     int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
@@ -40,20 +42,31 @@ public class MinMax {
             }
         }
         int res = tab_values[0];
-        if (computer_play){
+
+        if (depth == 0){
             // WRITE the code: res contains the MAX of tab_values
             for(int i=0;i<tab_values.length;i++){
                 if(res < tab_values[i])
-                    res = tab_values[i];
+                    res = i;
             }
-        } else {
-            // WRITE the code: res contains the MIN of tab_valuess
-            res = tab_values[0];
-            for(int i=0;i<tab_values.length;i++){
-                if(res > tab_values[i])
-                    res = tab_values[i];
+        }else{
+            if (computer_play){
+                // WRITE the code: res contains the MAX of tab_values
+                for(int i=0;i<tab_values.length;i++){
+                    if(res < tab_values[i])
+                        res = tab_values[i];
+                }
+            } else {
+                // WRITE the code: res contains the MIN of tab_valuess
+                res = tab_values[0];
+                for(int i=0;i<tab_values.length;i++){
+                    if(res > tab_values[i])
+                        res = tab_values[i];
+                }
             }
         }
+
+
         System.out.println("-------");
         String str_tab = "";
         for(int i=0;i<tab_values.length;i++){

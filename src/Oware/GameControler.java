@@ -50,6 +50,12 @@ public class GameControler {
             if(tmp == 0){
                 // si on revient sur la position de départ, on ne met pas de graine dedans
                 if(holePosition == move)
+                    /*if (holePosition == 5){ //Mod pour cas holepositon = 6;
+                        plateau2[0] = 0;
+                    }else{
+                        holePosition++;
+
+                    }*/
                     holePosition++;
                 plateau1[holePosition]++;
             }

@@ -1,10 +1,8 @@
-package Oware;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class GameControlerTest {
 
-    @org.junit.jupiter.api.Test
+    /*@org.junit.jupiter.api.Test
     void validMove() {
     }
 
@@ -18,5 +16,5 @@ class GameControlerTest {
 
     @org.junit.jupiter.api.Test
     void evaluation() {
-    }
+    }*/
 }

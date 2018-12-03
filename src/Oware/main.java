@@ -15,7 +15,7 @@ public class main{
         Position position = new Position();
         position.init();
 
-        System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,3));
+        System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,6));
 
         System.out.println(position.toString(gameControler.computer_player_one));
 
@@ -30,16 +30,16 @@ public class main{
 
             System.out.println(position.toString(gameControler.computer_player_one));
 
-
             if(!GameControler.finalPosition(position,false,0)){System.out.println("Joueur 2 :");
                 System.out.println("---------------------------------------------------------------------------------------------------------------");
                 hole = Integer.parseInt(sc.next());
                 position = GameControler.playMove(position,!gameControler.computer_player_one,hole);
 
-                System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,3));
+                System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,6));
 
                 System.out.println(position.toString(gameControler.computer_player_one));
             }
         }
     }
 }
+
