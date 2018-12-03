@@ -47,17 +47,20 @@ public class GameControler {
             int holePosition = position%6;
             // renvoi vrai si le reste de la division est paire (pour choisir le camp)
             int tmp = (position/6)%2;
+            boolean tmpBool = true;
             if(tmp == 0){
                 // si on revient sur la position de départ, on ne met pas de graine dedans
                 if(holePosition == move)
-                    /*if (holePosition == 5){ //Mod pour cas holepositon = 6;
-                        plateau2[0] = 0;
+                    if (holePosition == 5){ //Mod pour cas holepositon = 6;
+                        holePosition = 0;
+                        plateau2[holePosition] = 0;
+                        tmpBool = false;
                     }else{
                         holePosition++;
-
-                    }*/
-                    holePosition++;
-                plateau1[holePosition]++;
+                    }
+                if(tmpBool){
+                    plateau1[holePosition]++;
+                }
             }
             else{
                 plateau2[holePosition]++;

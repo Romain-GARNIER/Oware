@@ -5,9 +5,9 @@ import java.util.Hashtable;
 public class MinMax {
 
     int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
-        System.out.println("depth : "+depth);
-        System.out.println("computer : "+computer_play);
-        System.out.println(pos_current.toString(true));
+        //System.out.println("depth : "+depth);
+        //System.out.println("computer : "+computer_play);
+        //System.out.println(pos_current.toString(true));
         // computer_play is true if the computer has to play and false otherwise
         int[] tab_values = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast

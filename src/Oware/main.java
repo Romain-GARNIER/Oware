@@ -15,7 +15,7 @@ public class main{
         Position position = new Position();
         position.init();
 
-        System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,3));
+        System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,5));
 
         System.out.println(position.toString(gameControler.computer_player_one));
 
@@ -24,7 +24,7 @@ public class main{
             int hole;
             System.out.println("Joueur 1 :");
             // hole = Integer.parseInt(sc.next());
-            hole = minMax.minMaxValue(position,gameControler.computer_player_one,0,3);
+            hole = minMax.minMaxValue(position,gameControler.computer_player_one,0,5);
             position = GameControler.playMove(position,gameControler.computer_player_one,hole);
             System.out.println("coup choisi par le bot : "+hole);
 
