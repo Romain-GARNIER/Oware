@@ -44,11 +44,15 @@ public class MinMax {
         int res = tab_values[0];
 
         if (depth == 0){
+            int indice = 0;
             // WRITE the code: res contains the MAX of tab_values
             for(int i=0;i<tab_values.length;i++){
-                if(res < tab_values[i])
-                    res = i;
+                if(res < tab_values[i]){
+                    res = tab_values[i];
+                    indice = i;
+                }
             }
+            res = indice;
         }else{
             if (computer_play){
                 // WRITE the code: res contains the MAX of tab_values
