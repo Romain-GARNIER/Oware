@@ -41,6 +41,8 @@ public class GameControler {
         plateau1[move] = 0;
         holeStart = move+1;
 
+        // Dernier coup dans le camp ennemmi
+        int lastHole = -1;
         for(int i=0;i<nbSeed;i++){
             position = holeStart + i;
             // position du trou sur un camp (varie entre 1 et 6)
@@ -64,10 +66,21 @@ public class GameControler {
             }
             else{
                 plateau2[holePosition]++;
-                if(plateau2[holePosition] == 3 || plateau2[holePosition] == 2){
-                    nbCapturedSeed += plateau2[holePosition];
-                    plateau2[holePosition] = 0;
+                lastHole = holePosition;
+            }
+        }
+
+        if(lastHole >= 0){
+            int i = lastHole;
+            boolean stop = false;
+            while (i >= 0 && !stop){
+                if(plateau2[i] == 2 || plateau2[i] == 3 ){
+                    nbCapturedSeed += plateau2[i];
+                    plateau2[i] = 0;
+                }else {
+                    stop = true;
                 }
+                i--;
             }
         }
 
