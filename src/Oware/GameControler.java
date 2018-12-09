@@ -43,6 +43,7 @@ public class GameControler {
 
         // Dernier coup dans le camp ennemmi
         int lastHole = -1;
+        boolean ennemySide = false;
         for(int i=0;i<nbSeed;i++){
             position = holeStart + i;
             // position du trou sur un camp (varie entre 1 et 6)
@@ -63,14 +64,16 @@ public class GameControler {
                 if(tmpBool){
                     plateau1[holePosition]++;
                 }
+                ennemySide = false;
             }
             else{
                 plateau2[holePosition]++;
                 lastHole = holePosition;
+                ennemySide = true;
             }
         }
 
-        if(lastHole >= 0){
+        if(lastHole >= 0 && ennemySide){
             int i = lastHole;
             boolean stop = false;
             while (i >= 0 && !stop){
@@ -110,7 +113,17 @@ public class GameControler {
 
     public static int evaluation(Position pos, boolean computer_play, int depth){
 //        if(computer_play){
-            return pos.seeds_computer - pos.seeds_player;
+        int seeds_player = pos.seeds_player;
+        int seeds_computer = pos.seeds_computer;
+        for (int i = 0; i < pos.cells_player.length; i++){
+            seeds_player += pos.cells_player[i];
+        }
+
+        for (int i = 0; i < pos.cells_computer.length; i++){
+            seeds_computer += pos.cells_computer[i];
+        }
+
+        return seeds_computer - seeds_player;
 //        }
 //        return pos.seeds_player - pos.seeds_computer;
     }
