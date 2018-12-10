@@ -30,7 +30,7 @@ public class MinMax {
         }
         if (depth == depthMax) {
             int evaluation = GameControler.evaluation(pos_current, computer_play, depth);
-            System.out.println("evaluation : "+evaluation+"\n");
+            IHM.log("evaluation : "+evaluation+"\n",2);
             return evaluation;
             // the simplest evealution fucntion is the difference of the taken seeds
         }
@@ -79,14 +79,14 @@ public class MinMax {
         }
 
 
-        System.out.println("-------");
+        IHM.log("-------",2);
         String str_tab = "";
         for(int i=0;i<tab_values.length;i++){
             str_tab+="["+tab_values[i]+"]";
         }
-        System.out.println("tab value : "+str_tab);
-        System.out.println("res : "+res);
-        System.out.println("-------\n");
+        IHM.log("tab value : "+str_tab,2);
+        IHM.log("res : "+res,2);
+        IHM.log("-------\n",2);
         return res;
     }
 

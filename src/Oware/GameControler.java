@@ -1,14 +1,93 @@
 package Oware;
 
+import java.util.Scanner;
+
 public class GameControler {
     boolean computer_player_one;
+    Scanner sc;
+    MinMax minMax;
+    Position position;
 
-    public void definePlayer(int number){
+    public GameControler(){
+        sc = new Scanner(System.in);
+        minMax = new MinMax();
+        position = new Position();
+        position.init();
+    }
+
+    public void definePlayer(){
+        int number = sc.nextInt();
         if(number == 1){
             this.computer_player_one = false;
         }
         if(number == 2)
             this.computer_player_one = true;
+    }
+
+    public void startGame(){
+
+        while (!GameControler.finalPosition(position,false,0)){
+            int hole;
+
+            IHM.console("---------------------------------------------------------------------------------------------------------------");
+            IHM.console("Joueur 1 :");
+            IHM.console(position.toString(computer_player_one));
+
+            if(computer_player_one){
+                IHM.log("MinMax : "+minMax.minMaxValue(position,true,0,5),2);
+                hole = minMax.minMaxValue(position,true,0,5);
+                IHM.console("coup choisi par le bot : "+(hole+1));
+            }
+            else{
+                IHM.console("Choisissez un trou entre 1 et 6 :");
+                hole = Integer.parseInt(sc.next());
+                hole = hole - 1;
+                if(!validMove(position,false,hole)){
+                    while (!validMove(position,false,hole)){
+                        IHM.console("Le coup n'est pas valide : ");
+                        IHM.console("Choisissez un trou entre 1 et 6 :");
+                        hole = Integer.parseInt(sc.next());
+                        hole = hole-1;
+                    }
+                }
+            }
+            position = GameControler.playMove(position,computer_player_one,hole);
+
+//            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
+
+            if(computer_player_one)
+                IHM.console(position.toString(false));
+
+            if(!GameControler.finalPosition(position,false,0)){
+                IHM.console("Joueur 2 :");
+                IHM.console("---------------------------------------------------------------------------------------------------------------");
+
+                if(!computer_player_one) {
+                    hole = minMax.minMaxValue(position, true, 0, 5);
+                    IHM.console("coup choisi par le bot : "+(hole+7));
+                }
+                else{
+                    IHM.console("Choisissez un trou entre 7 et 12 :");
+                    hole = Integer.parseInt(sc.next());
+                    hole = (hole-1)%6;
+                    if(!validMove(position,false,hole)){
+                        while (!validMove(position,false,hole)){
+                            IHM.console("Le coup n'est pas valide : ");
+                            IHM.console("Choisissez un trou entre 7 et 12 :");
+                            hole = Integer.parseInt(sc.next());
+                            hole = (hole-1)%6;
+                        }
+                    }
+                }
+
+                position = GameControler.playMove(position,!computer_player_one,hole);
+
+                //System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,3));
+
+                if(computer_player_one)
+                    IHM.console(position.toString(true));
+            }
+        }
     }
 
     public static boolean validMove(Position pos, boolean computer_play, int move){
