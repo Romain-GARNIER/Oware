@@ -33,51 +33,51 @@ public class GameControler {
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
 
-            if(computer_player_one){
-                hole = minMax.minMaxValue(position,true,0,9);
-                IHM.console("coup choisi par le bot : "+(hole+1));
-            }
-            else{
-                IHM.console("Choisissez un trou entre 1 et 6 :");
-                hole = Integer.parseInt(sc.next());
-                hole = hole - 1;
-                if(!validMove(position,false,hole)){
-                    while (!validMove(position,false,hole)){
-                        IHM.console("Le coup n'est pas valide : ");
-                        IHM.console("Choisissez un trou entre 1 et 6 :");
-                        hole = Integer.parseInt(sc.next());
-                        hole = hole-1;
-                    }
-                }
-            }
+//            if(computer_player_one){
+            hole = minMax.minMaxValue(position,true,0,7);
+            IHM.console("coup choisi par le bot : "+(hole+1));
+//            }
+//            else{
+//                IHM.console("Choisissez un trou entre 1 et 6 :");
+//                hole = Integer.parseInt(sc.next());
+//                hole = hole - 1;
+//                if(!validMove(position,false,hole)){
+//                    while (!validMove(position,false,hole)){
+//                        IHM.console("Le coup n'est pas valide : ");
+//                        IHM.console("Choisissez un trou entre 1 et 6 :");
+//                        hole = Integer.parseInt(sc.next());
+//                        hole = hole-1;
+//                    }
+//                }
+//            }
             position = GameControler.playMove(position,computer_player_one,hole);
 
 //            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
 
 //            if(computer_player_one)
-                IHM.console(position.toString(true));
+            IHM.console(position.toString(true));
 
             if(!GameControler.finalPosition(position,false,0)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
 
-                if(!computer_player_one) {
-                    hole = minMax.minMaxValue(position, true, 0, 9);
-                    IHM.console("coup choisi par le bot : "+(hole+7));
-                }
-                else{
-                    IHM.console("Choisissez un trou entre 7 et 12 :");
-                    hole = Integer.parseInt(sc.next());
-                    hole = (hole-1)%6;
-                    if(!validMove(position,false,hole)){
-                        while (!validMove(position,false,hole)){
-                            IHM.console("Le coup n'est pas valide : ");
-                            IHM.console("Choisissez un trou entre 7 et 12 :");
-                            hole = Integer.parseInt(sc.next());
-                            hole = (hole-1)%6;
-                        }
-                    }
-                }
+//                if(!computer_player_one) {
+                hole = minMax.minMaxValueInverse(position, false, 0, 7);
+                IHM.console("coup choisi par le bot : "+(hole+7));
+//                }
+//                else{
+//                    IHM.console("Choisissez un trou entre 7 et 12 :");
+//                    hole = Integer.parseInt(sc.next());
+//                    hole = (hole-1)%6;
+//                    if(!validMove(position,false,hole)){
+//                        while (!validMove(position,false,hole)){
+//                            IHM.console("Le coup n'est pas valide : ");
+//                            IHM.console("Choisissez un trou entre 7 et 12 :");
+//                            hole = Integer.parseInt(sc.next());
+//                            hole = (hole-1)%6;
+//                        }
+//                    }
+//                }
 
                 position = GameControler.playMove(position,!computer_player_one,hole);
 
@@ -198,6 +198,24 @@ public class GameControler {
             seeds_computer += pos.cells_computer[i];
         }
         return seeds_computer - seeds_player;
+//        }
+//        return pos.seeds_player - pos.seeds_computer;
+    }
+
+    public static int evaluation2(Position pos){
+//        if(computer_play){
+        int seeds_player = pos.seeds_player;
+        int seeds_computer = pos.seeds_computer;
+
+//        for (int i = 0; i < pos.cells_player.length; i++){
+//            seeds_player += pos.cells_player[i];
+//        }
+//
+//        for (int i = 0; i < pos.cells_computer.length; i++){
+//            seeds_computer += pos.cells_computer[i];
+//        }
+
+        return seeds_player - seeds_computer;
 //        }
 //        return pos.seeds_player - pos.seeds_computer;
     }
