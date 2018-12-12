@@ -29,7 +29,7 @@ public class MinMax {
                 return 0;
         }
         if (depth == depthMax) {
-            int evaluation = GameControler.evaluation(pos_current, computer_play, depth);
+            int evaluation = GameControler.evaluation(pos_current);
             IHM.log("evaluation : "+evaluation+"\n",2);
             return evaluation;
             // the simplest evealution fucntion is the difference of the taken seeds
@@ -60,6 +60,7 @@ public class MinMax {
                     indice = i;
                 }
             }
+            IHM.log("MinMax :"+tab_values[indice],1);
             res = indice;
         }else{
             if (computer_play){

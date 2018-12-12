@@ -30,11 +30,10 @@ public class GameControler {
             int hole;
 
             IHM.console("---------------------------------------------------------------------------------------------------------------");
-            IHM.console("Joueur 1 :");
             IHM.console(position.toString(computer_player_one));
+            IHM.console("Joueur 1 :");
 
             if(computer_player_one){
-                IHM.log("MinMax : "+minMax.minMaxValue(position,true,0,5),2);
                 hole = minMax.minMaxValue(position,true,0,5);
                 IHM.console("coup choisi par le bot : "+(hole+1));
             }
@@ -55,12 +54,12 @@ public class GameControler {
 
 //            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
 
-            if(computer_player_one)
-                IHM.console(position.toString(false));
+//            if(computer_player_one)
+                IHM.console(position.toString(true));
 
             if(!GameControler.finalPosition(position,false,0)){
-                IHM.console("Joueur 2 :");
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
+                IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
                     hole = minMax.minMaxValue(position, true, 0, 5);
@@ -83,9 +82,6 @@ public class GameControler {
                 position = GameControler.playMove(position,!computer_player_one,hole);
 
                 //System.out.println("MinMax : "+minMax.minMaxValue(position,gameControler.computer_player_one,0,3));
-
-                if(computer_player_one)
-                    IHM.console(position.toString(true));
             }
         }
     }
@@ -190,7 +186,7 @@ public class GameControler {
         return sum1 == 0 || sum2 == 0;
     }
 
-    public static int evaluation(Position pos, boolean computer_play, int depth){
+    public static int evaluation(Position pos){
 //        if(computer_play){
         int seeds_player = pos.seeds_player;
         int seeds_computer = pos.seeds_computer;
@@ -201,9 +197,41 @@ public class GameControler {
         for (int i = 0; i < pos.cells_computer.length; i++){
             seeds_computer += pos.cells_computer[i];
         }
-
         return seeds_computer - seeds_player;
 //        }
 //        return pos.seeds_player - pos.seeds_computer;
+    }
+
+    public int winner(){
+        int scorePlayer1 = totalSeeds(1);
+        int scorePlayer2 = totalSeeds(2);
+
+        if(scorePlayer1 > scorePlayer2)
+            return 1;
+        return 2;
+
+    }
+
+    public int totalSeeds(int player){
+        int seeds_player = position.seeds_player;
+        int seeds_computer = position.seeds_computer;
+        for (int i = 0; i < position.cells_player.length; i++){
+            seeds_player += position.cells_player[i];
+        }
+
+        for (int i = 0; i < position.cells_computer.length; i++){
+            seeds_computer += position.cells_computer[i];
+        }
+
+        if(computer_player_one){
+            if(player == 1)
+                return seeds_computer;
+            return seeds_player;
+        }
+        else{
+            if(player == 1)
+                return seeds_player;
+            return seeds_computer;
+        }
     }
 }
