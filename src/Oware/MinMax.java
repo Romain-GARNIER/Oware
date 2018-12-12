@@ -1,7 +1,5 @@
 package Oware;
 
-import java.util.Hashtable;
-
 public class MinMax {
 
     int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
@@ -13,19 +11,19 @@ public class MinMax {
         Position pos_next = new Position(); // In C : created on the stack: = very fast
         if (GameControler.finalPosition(pos_current, computer_play, depth)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
-            for (int i = 0; i < pos_current.cells_player.length; i++){
-                pos_current.seeds_player += pos_current.cells_player[i];
+            for (int i = 0; i < pos_current.cells_red_player.length; i++){
+                pos_current.seeds_red_player += pos_current.cells_red_player[i];
             }
 
-            for (int i = 0; i < pos_current.cells_computer.length; i++){
-                pos_current.seeds_computer += pos_current.cells_computer[i];
+            for (int i = 0; i < pos_current.cells_red_computer.length; i++){
+                pos_current.seeds_computer += pos_current.cells_red_computer[i];
             }
 
-            if(pos_current.seeds_computer > pos_current.seeds_player)
+            if(pos_current.seeds_computer > pos_current.seeds_red_player)
                 return 96;
-            if(pos_current.seeds_computer < pos_current.seeds_player)
+            if(pos_current.seeds_computer < pos_current.seeds_red_player)
                 return -96;
-            if(pos_current.seeds_computer == pos_current.seeds_player)
+            if(pos_current.seeds_computer == pos_current.seeds_red_player)
                 return 0;
         }
         if (depth == depthMax) {

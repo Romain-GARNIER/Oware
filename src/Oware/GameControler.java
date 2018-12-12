@@ -86,12 +86,12 @@ public class GameControler {
         }
     }
 
-    public static boolean validMove(Position pos, boolean computer_play, int move){
+    public static boolean validMove(Position pos, boolean computer_play, int move, String color){
         int[] plateau;
         if(computer_play)
-            plateau = pos.cells_computer.clone();
+            plateau = pos.cells_red_computer.clone();
         else
-            plateau = pos.cells_player.clone();
+            plateau = pos.cells_red_player.clone();
 
         return plateau[move] != 0;
     }
@@ -104,12 +104,12 @@ public class GameControler {
         int nbCapturedSeed = 0;
         int holeStart;
         if(computer_play){
-            plateau1 = pos_current.cells_computer.clone();
-            plateau2 = pos_current.cells_player.clone();
+            plateau1 = pos_current.cells_red_computer.clone();
+            plateau2 = pos_current.cells_red_player.clone();
         }
         else{
-            plateau1 = pos_current.cells_player.clone();
-            plateau2 = pos_current.cells_computer.clone();
+            plateau1 = pos_current.cells_red_player.clone();
+            plateau2 = pos_current.cells_red_computer.clone();
         }
 
         nbSeed = plateau1[move];
@@ -163,14 +163,14 @@ public class GameControler {
         }
 
         if(computer_play){
-            pos_next.cells_computer = plateau1;
-            pos_next.cells_player = plateau2;
+            pos_next.cells_red_computer = plateau1;
+            pos_next.cells_red_player = plateau2;
             pos_next.seeds_computer += nbCapturedSeed;
         }
         else{
-            pos_next.cells_player = plateau1;
-            pos_next.cells_computer = plateau2;
-            pos_next.seeds_player += nbCapturedSeed;
+            pos_next.cells_red_player = plateau1;
+            pos_next.cells_red_computer = plateau2;
+            pos_next.seeds_red_player += nbCapturedSeed;
         }
         return pos_next;
     }
@@ -180,26 +180,26 @@ public class GameControler {
         sum1 = 0;
         sum2 = 0;
         for(int i=0;i<6;i++){
-            sum1 += pos.cells_computer[i];
-            sum2 += pos.cells_player[i];
+            sum1 += pos.cells_red_computer[i];
+            sum2 += pos.cells_red_player[i];
         }
         return sum1 == 0 || sum2 == 0;
     }
 
     public static int evaluation(Position pos){
 //        if(computer_play){
-        int seeds_player = pos.seeds_player;
+        int seeds_player = pos.seeds_red_player;
         int seeds_computer = pos.seeds_computer;
-        for (int i = 0; i < pos.cells_player.length; i++){
-            seeds_player += pos.cells_player[i];
+        for (int i = 0; i < pos.cells_red_player.length; i++){
+            seeds_player += pos.cells_red_player[i];
         }
 
-        for (int i = 0; i < pos.cells_computer.length; i++){
-            seeds_computer += pos.cells_computer[i];
+        for (int i = 0; i < pos.cells_red_computer.length; i++){
+            seeds_computer += pos.cells_red_computer[i];
         }
         return seeds_computer - seeds_player;
 //        }
-//        return pos.seeds_player - pos.seeds_computer;
+//        return pos.seeds_red_player - pos.seeds_computer;
     }
 
     public int winner(){
@@ -213,14 +213,14 @@ public class GameControler {
     }
 
     public int totalSeeds(int player){
-        int seeds_player = position.seeds_player;
+        int seeds_player = position.seeds_red_player;
         int seeds_computer = position.seeds_computer;
-        for (int i = 0; i < position.cells_player.length; i++){
-            seeds_player += position.cells_player[i];
+        for (int i = 0; i < position.cells_red_player.length; i++){
+            seeds_player += position.cells_red_player[i];
         }
 
-        for (int i = 0; i < position.cells_computer.length; i++){
-            seeds_computer += position.cells_computer[i];
+        for (int i = 0; i < position.cells_red_computer.length; i++){
+            seeds_computer += position.cells_red_computer[i];
         }
 
         if(computer_player_one){
