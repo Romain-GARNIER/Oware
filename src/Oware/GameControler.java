@@ -34,7 +34,7 @@ public class GameControler {
             IHM.console("Joueur 1 :");
 
             if(computer_player_one){
-                hole = minMax.minMaxValue(position,true,0,5);
+                hole = minMax.minMaxValue(position,true,0,9);
                 IHM.console("coup choisi par le bot : "+(hole+1));
             }
             else{
@@ -62,7 +62,7 @@ public class GameControler {
                 IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
-                    hole = minMax.minMaxValue(position, true, 0, 5);
+                    hole = minMax.minMaxValue(position, true, 0, 9);
                     IHM.console("coup choisi par le bot : "+(hole+7));
                 }
                 else{
