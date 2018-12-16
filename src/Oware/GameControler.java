@@ -6,11 +6,13 @@ public class GameControler {
     boolean computer_player_one;
     Scanner sc;
     MinMax minMax;
+    AlphaBetaCut alphaBetaCut;
     Position position;
 
     public GameControler(){
         sc = new Scanner(System.in);
         minMax = new MinMax();
+        alphaBetaCut = new AlphaBetaCut();
         position = new Position();
         position.init();
     }
@@ -34,7 +36,8 @@ public class GameControler {
             IHM.console("Joueur 1 :");
 
             if(computer_player_one){
-                hole = minMax.minMaxValue(position,true,0,9);
+                //hole = minMax.minMaxValue(position,true,0,8);
+                hole = alphaBetaCut.AlphaBetaCutValue(position, true, 0, 9, -100, 100);
                 IHM.console("coup choisi par le bot : "+(hole+1));
             }
             else{
@@ -62,7 +65,8 @@ public class GameControler {
                 IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
-                    hole = minMax.minMaxValue(position, true, 0, 9);
+                    //hole = minMax.minMaxValue(position, true, 0, 8);
+                    hole = alphaBetaCut.AlphaBetaCutValue(position, true, 0, 9, -100, 100);
                     IHM.console("coup choisi par le bot : "+(hole+7));
                 }
                 else{
