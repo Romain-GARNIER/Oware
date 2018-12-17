@@ -1,6 +1,11 @@
 package Oware;
 
 public class MinMax {
+    GameControler gameControler;
+
+    public MinMax(GameControler gameControler){
+        this.gameControler = gameControler;
+    }
 
     int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
 
@@ -188,13 +193,18 @@ public class MinMax {
                 indice_black = i;
             }
         }
+
+        int n = 1;
+        if(!gameControler.computer_player_one)
+            n=7;
+
         if(res_red > res_black){
             res = res_red;
-            move = (indice_red+1)+"-R";
+            move = (indice_red+n)+"-R";
         }
         else{
             res = res_black;
-            move = (indice_black+1)+"-B";
+            move = (indice_black+n)+"-B";
         }
         IHM.log("MinMax :"+res,1);
         return move;

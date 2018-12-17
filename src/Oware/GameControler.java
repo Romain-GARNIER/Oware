@@ -13,7 +13,7 @@ public class GameControler {
 
     public GameControler(){
         sc = new Scanner(System.in);
-        minMax = new MinMax();
+        minMax = new MinMax(this);
         position = new Position();
         position.init();
     }
@@ -56,7 +56,7 @@ public class GameControler {
 //            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
 
 //            if(computer_player_one)
-                IHM.console(position.toString(true));
+                IHM.console(position.toString(computer_player_one));
 
             if(!GameControler.finalPosition(position,false,0)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
@@ -64,7 +64,7 @@ public class GameControler {
 
                 if(!computer_player_one) {
                     move = minMax.minMaxMove(position, true, 0, 3);
-                    IHM.console("coup choisi par le bot : "+(move+6));
+                    IHM.console("coup choisi par le bot : "+(move));
                 }
                 else{
                     IHM.console("Choisissez un trou entre 7 et 12 :");
