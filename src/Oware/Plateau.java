@@ -28,7 +28,6 @@ public class Plateau {
             Joueur.addGraines(plateau[nextTrou] + 1);
             plateau[nextTrou] = 0;
         }
-
     }
 
 
