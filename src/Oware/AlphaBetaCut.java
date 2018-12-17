@@ -10,6 +10,10 @@ public class AlphaBetaCut {
     private Position posInit;
     private GameControler gc;
 
+    public void setPosInit(Position posInit) {
+        this.posInit = posInit;
+    }
+
     public AlphaBetaCut(GameControler gc, Position posInit) {
         this.gc = gc;
         this.posInit = posInit;
@@ -45,7 +49,7 @@ public class AlphaBetaCut {
         for (String coup : coupPossible) {
             pos_next = GameControler.playMove(pos_current, computer_play, coup);
             int value = AlphaBetaCutValue(pos_next, !computer_play, depth + 1, depthMax, a, b);
-            System.out.println(value + " - " + maxValue + " - " + coup + " " + bestCoup);
+            //System.out.println(value + " - " + maxValue + " - " + coup + " " + bestCoup);
             if (maxValue < value || (maxValue == value && new Random().nextInt() % 2 == 0)) {
                 maxValue = value;
                 bestCoup = coup;

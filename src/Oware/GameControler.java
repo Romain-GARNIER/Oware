@@ -1,5 +1,6 @@
 package Oware;
 
+import javax.sound.midi.Soundbank;
 import java.util.Scanner;
 
 public class GameControler {
@@ -39,10 +40,10 @@ public class GameControler {
             IHM.console("---------------------------------------------------------------------------------------------------------------");
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
-
+            alphaBetaCut.setPosInit(position);
             if(computer_player_one){
                 //move = minMax.minMaxMove(position,true,0,6);
-                move = alphaBetaCut.AlphaBetaCutStart(position, true, -1, 8, -100, 100);
+                move = alphaBetaCut.AlphaBetaCutStart(position, true, -1, 6, 0, 96);
                 //IHM.console("coup choisi par le bot : "+(hole+1));
                 IHM.console("coup choisi par le bot : "+move);
             }
@@ -70,7 +71,7 @@ public class GameControler {
 
                 if(!computer_player_one) {
                     //move = minMax.minMaxMove(position, true, 0, 6);
-                    move = alphaBetaCut.AlphaBetaCutStart(position, true, -1, 8, -100, 100);
+                    move = alphaBetaCut.AlphaBetaCutStart(position, true, -1, 6, 0, 96);
                     IHM.console("coup choisi par le bot : "+move);
                 }
                 else{
@@ -303,8 +304,8 @@ public class GameControler {
         sum1 = 0;
         sum2 = 0;
         for(int i=0;i<6;i++){
-            sum1 += pos.cells_red_computer[i];
-            sum2 += pos.cells_red_player[i];
+            sum1 += pos.cells_red_computer[i] + pos.cells_black_computer[i];
+            sum2 += pos.cells_red_player[i] + pos.cells_black_player[i];
         }
         return sum1 == 0 || sum2 == 0;
     }
@@ -320,6 +321,8 @@ public class GameControler {
         int seeds_computer = (pos.seeds_red_computer + pos.seeds_black_computer);
         int seeds_computerInit = posInit.seeds_red_computer + posInit.seeds_black_player;
 
+
+
         //                                  CELL
         //      PLAYER
         int cell_player = 0;
@@ -329,7 +332,7 @@ public class GameControler {
         for(int i = 0; i<pos.cells_red_player.length; i++){
             cell_player += pos.cells_red_player[i];
         }
-        //      COMPUTER
+        //      COMPUTER (NOUS)
         int cell_computer = 0;
         for(int i =0; i<pos.cells_black_computer.length; i++){
             cell_computer += pos.cells_black_computer[i];
@@ -337,20 +340,28 @@ public class GameControler {
         for(int i = 0; i<pos.cells_red_computer.length; i++){
             cell_computer += pos.cells_red_computer[i];
         }
-
-
         //*                             Prise en compte que avancer Joueur Courant
 
         //** Prise en compte graine capturer
         if (seeds_player - seeds_playerInit > 0){
-            eval += (seeds_player - seeds_playerInit)*2;
+            eval += -(seeds_player - seeds_playerInit)*2;
+        }
+        if (seeds_computer - seeds_computerInit > 0){
+            eval += (seeds_computer - seeds_computerInit)*5;
         }
 
-        //** Prise en compte graine capturer
-        if (cell_player > cell_computer){
-            eval += (cell_player -  cell_computer);
-        }
+        //
 
+
+
+
+        //final position
+
+        if(cell_player == 0){
+            eval = -96;
+        }else if (cell_computer == 0){
+            eval = 96;
+        }
         return eval;
     }
 
