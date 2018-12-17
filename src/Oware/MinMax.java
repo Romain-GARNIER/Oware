@@ -2,6 +2,14 @@ package Oware;
 
 public class MinMax {
 
+    private Position posInit;
+    private int depthMax;
+
+    public MinMax(Position posInit, int depthMax) {
+        this.posInit = posInit;
+        this.depthMax = depthMax;
+    }
+
     int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
 
         //System.out.println("depth : "+depth);
@@ -29,7 +37,7 @@ public class MinMax {
                 return 0;
         }
         if (depth == depthMax) {
-            int evaluation = GameControler.evaluation(pos_current);
+            int evaluation = GameControler.evaluation(posInit,pos_current);
             IHM.log("evaluation : "+evaluation+"\n",3);
             return evaluation;
             // the simplest evealution fucntion is the difference of the taken seeds

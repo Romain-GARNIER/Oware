@@ -7,13 +7,14 @@ public class GameControler {
     Scanner sc;
     MinMax minMax;
     Position position;
+    private static int depthMAX;
 
     static final String COLOR_RED = "R";
     static final String COLOR_BLACK = "B";
 
     public GameControler(){
         sc = new Scanner(System.in);
-        minMax = new MinMax();
+        depthMAX = 4;
         position = new Position();
         position.init();
     }
@@ -31,6 +32,7 @@ public class GameControler {
 
         while (!GameControler.finalPosition(position,false,0)){
             String move;
+            minMax = new MinMax(position, depthMAX);
 
             IHM.console("---------------------------------------------------------------------------------------------------------------");
             IHM.console(position.toString(computer_player_one));
@@ -297,22 +299,50 @@ public class GameControler {
         return sum1 == 0 || sum2 == 0;
     }
 
-    public static int evaluation(Position pos){
+    public static int evaluation(Position posInit, Position pos){
+        int eval = 1;
 //        if(computer_play){
+
+        //                                  SEED
         int seeds_player = pos.seeds_red_player + pos.seeds_black_player;
+        int seeds_playerInit = posInit.seeds_red_player + posInit.seeds_black_player;
+
         int seeds_computer = pos.seeds_red_computer + pos.seeds_black_computer;
-        for (int i = 0; i < pos.cells_red_player.length; i++){
-            seeds_player += pos.cells_red_player[i];
-            seeds_player += pos.cells_black_player[i];
+        int seeds_computerInit = posInit.seeds_red_computer + posInit.seeds_black_player;
+
+        //                                  CELL
+        //      PLAYER
+        int cell_player = 0;
+        for(int i =0; i<pos.cells_black_player.length; i++){
+            cell_player += pos.cells_black_player[i];
+        }
+        for(int i = 0; i<pos.cells_red_player.length; i++){
+            cell_player += pos.cells_red_player[i];
+        }
+        //      COMPUTER
+        int cell_computer = 0;
+        for(int i =0; i<pos.cells_black_computer.length; i++){
+            cell_computer += pos.cells_black_computer[i];
+        }
+        for(int i = 0; i<pos.cells_red_computer.length; i++){
+            cell_computer += pos.cells_red_computer[i];
         }
 
-        for (int i = 0; i < pos.cells_red_computer.length; i++){
-            seeds_computer += pos.cells_red_computer[i];
-            seeds_computer += pos.cells_black_computer[i];
+
+
+        //*                             Prise en compte que avancer Joueur Courant
+
+        //** Prise en compte graine capturer
+        if (seeds_player > seeds_computer){
+            eval += (seeds_player - seeds_computer) * 2;
         }
-        return seeds_computer - seeds_player;
-//        }
-//        return pos.seeds_red_player - pos.seeds_computer;
+
+        //** Prise en compte graine capturer
+        if (cell_player > cell_computer){
+            eval += (cell_player -  cell_computer);
+        }
+
+        return eval;
     }
 
     public int winner(){
