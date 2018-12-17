@@ -14,9 +14,10 @@ public class GameControler {
 
     public GameControler(){
         sc = new Scanner(System.in);
-        depthMAX = 4;
+
         position = new Position();
         position.init();
+        minMax = new MinMax(this, position);
     }
 
     public void definePlayer(){
@@ -32,14 +33,13 @@ public class GameControler {
 
         while (!GameControler.finalPosition(position,false,0)){
             String move;
-            minMax = new MinMax(position, depthMAX);
 
             IHM.console("---------------------------------------------------------------------------------------------------------------");
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
 
             if(computer_player_one){
-                move = minMax.minMaxMove(position,true,0,3);
+                move = minMax.minMaxMove(position,true,0,6);
                 IHM.console("coup choisi par le bot : "+move);
             }
             else{
@@ -58,15 +58,15 @@ public class GameControler {
 //            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
 
 //            if(computer_player_one)
-                IHM.console(position.toString(true));
+                IHM.console(position.toString(computer_player_one));
 
             if(!GameControler.finalPosition(position,false,0)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
-                    move = minMax.minMaxMove(position, true, 0, 3);
-                    IHM.console("coup choisi par le bot : "+(move+6));
+                    move = minMax.minMaxMove(position, true, 0, 6);
+                    IHM.console("coup choisi par le bot : "+(move));
                 }
                 else{
                     IHM.console("Choisissez un trou entre 7 et 12 :");
@@ -304,10 +304,10 @@ public class GameControler {
 //        if(computer_play){
 
         //                                  SEED
-        int seeds_player = pos.seeds_red_player + pos.seeds_black_player;
+        int seeds_player = (pos.seeds_red_player + pos.seeds_black_player);
         int seeds_playerInit = posInit.seeds_red_player + posInit.seeds_black_player;
 
-        int seeds_computer = pos.seeds_red_computer + pos.seeds_black_computer;
+        int seeds_computer = (pos.seeds_red_computer + pos.seeds_black_computer);
         int seeds_computerInit = posInit.seeds_red_computer + posInit.seeds_black_player;
 
         //                                  CELL
@@ -329,12 +329,11 @@ public class GameControler {
         }
 
 
-
         //*                             Prise en compte que avancer Joueur Courant
 
         //** Prise en compte graine capturer
-        if (seeds_player > seeds_computer){
-            eval += (seeds_player - seeds_computer) * 2;
+        if (seeds_player - seeds_playerInit > 0){
+            eval += (seeds_player - seeds_playerInit)*2;
         }
 
         //** Prise en compte graine capturer

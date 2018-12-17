@@ -12,6 +12,7 @@ public class main{
         gameControler.definePlayer();
 
         gameControler.startGame();
+        IHM.console(gameControler.position.toString());
 
         IHM.console("Joueur 1 : "+gameControler.totalSeeds(1)+" graines");
         IHM.console("Joueur 2 : "+gameControler.totalSeeds(2)+" graines");
