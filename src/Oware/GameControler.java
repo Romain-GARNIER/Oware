@@ -58,7 +58,7 @@ public class GameControler {
 //            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
 
 //            if(computer_player_one)
-                IHM.console(position.toString(true));
+                IHM.console(position.toString(computer_player_one));
 
             if(!GameControler.finalPosition(position,false,0)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
