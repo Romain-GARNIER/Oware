@@ -1,30 +1,64 @@
 package Oware;
 
-public class AlphaBetaCut {
-    private int bestCell;
-    private int[] tab_values;
 
-    int[] coupPossible(Position pos_current, boolean computer_play){
-        int[] coupsPossible = new int[6];
-        for (int i=0; i<6; i++){
-            if(GameControler.validMove(pos_current, computer_play, i)){
-                coupsPossible[i] = 1;
-            } else {
-                if (computer_play) coupsPossible[i] =-100;
-                else coupsPossible[i]=+100;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+
+public class AlphaBetaCut {
+    private Position posInit;
+    private GameControler gc;
+
+    public AlphaBetaCut(GameControler gc, Position posInit) {
+        this.gc = gc;
+        this.posInit = posInit;
+    }
+
+    ArrayList<String> coupPossible(Position pos_current, boolean computer_play){
+        ArrayList<String> coupsPossible = new ArrayList<>();
+        ArrayList<String> cellComputer = new ArrayList<>(Arrays.asList("1", "2", "3", "4", "5", "6"));
+        ArrayList<String> cellPlayer = new ArrayList<>(Arrays.asList("7", "8", "9", "10", "11", "12"));
+        ArrayList<String> couleur = new ArrayList<>(Arrays.asList("R", "B"));
+
+        ArrayList<String> currentCell = (gc.computer_player_one) ? cellComputer : cellPlayer;
+
+        for(String cellC : currentCell){
+            for(String couleurC : couleur){
+                String move = cellC + "-" + couleurC;
+                if(GameControler.validMove(pos_current, computer_play, move)){
+                    coupsPossible.add(move);
+                }
             }
         }
+
         return coupsPossible;
     }
 
-    int AlphaBetaCutValue(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b){
-        this.tab_values = new int[6];
-        int[] coupsPossible = new int[6];
+    String AlphaBetaCutStart(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b) {
+        String bestCoup = "";
+        Position pos_next;
+        int maxValue = -10000;
 
+        ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
+
+        for (String coup : coupPossible) {
+            pos_next = GameControler.playMove(pos_current, computer_play, coup);
+            int value = AlphaBetaCutValue(pos_next, !computer_play, depth + 1, depthMax, a, b);
+            System.out.println(value + " - " + maxValue + " - " + coup + " " + bestCoup);
+            if (maxValue < value || (maxValue == value && new Random().nextInt() % 2 == 0)) {
+                maxValue = value;
+                bestCoup = coup;
+            }
+        }
+        return bestCoup;
+    }
+
+    int AlphaBetaCutValue(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b){
         Position pos_next; // In C : created on the stack: = very fast
 
-        if (depth == depthMax || GameControler.finalPosition(pos_current, computer_play, depth)) {
-            int evaluation = GameControler.evaluation(pos_current);
+        if (depth == depthMax || GameControler.finalPosition(pos_current)) {
+            int evaluation = GameControler.evaluation(posInit,pos_current);
             IHM.log("evaluation : "+evaluation+"\n",3);
             return evaluation;
             // the simplest evealution fucntion is the difference of the taken seeds
@@ -32,52 +66,24 @@ public class AlphaBetaCut {
 
         int alpha = a;
         int beta = b;
+        ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
 
         if (computer_play){
-            for(int i =0; i<tab_values.length; i++){
-                pos_next = GameControler.playMove(pos_current, computer_play, i);
+            for(String coup: coupPossible){
+                pos_next = GameControler.playMove(pos_current, computer_play, coup);
                 int value = AlphaBetaCutValue(pos_next, !computer_play, depth+1, depthMax, alpha, beta);
                 alpha = Math.max(alpha, value);
-                tab_values[i] = Math.max(tab_values[i], value);
                 if (alpha >= beta) return beta;
             }
             return alpha;
         }else{
-            for(int i=0; i<tab_values.length;i++){
-                pos_next = GameControler.playMove(pos_current, computer_play, i);
+            for(String coup: coupPossible){
+                pos_next = GameControler.playMove(pos_current, computer_play, coup);
                 int value = AlphaBetaCutValue(pos_next, !computer_play, depth+1, depthMax, alpha, beta);
                 beta = Math.min(beta, value);
-                tab_values[i] = Math.min(tab_values[i], value);
                 if(alpha>=beta) return alpha;
             }
             return beta;
         }
     }
-
-    int runAlphaBetaCut(Position pos_current, boolean computer_play, int depthMax){
-        AlphaBetaCutValue(pos_current, computer_play, 0, depthMax, -100, 100);
-        int res = this.tab_values[0];
-        int indice = 0;
-        for(int i=0;i<this.tab_values.length;i++){
-            if(res < this.tab_values[i]){
-                res = this.tab_values[i];
-                indice = i;
-            }
-        }
-
-        IHM.log("-------",2);
-        String str_tab = "";
-        for(int i=0;i<tab_values.length;i++){
-            str_tab+="["+tab_values[i]+"]";
-        }
-        IHM.log("tab value : "+str_tab,2);
-        IHM.log("res : "+res,2);
-        IHM.log("-------\n",2);
-
-        IHM.log("MinMax :"+tab_values[indice],1);
-        res = indice;
-        return res;
-    }
-
-
 }

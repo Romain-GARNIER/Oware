@@ -1,5 +1,7 @@
 package Oware;
 
+import javafx.geometry.Pos;
+
 public class MinMax {
     GameControler gameControler;
 
@@ -20,7 +22,7 @@ public class MinMax {
         int[] tab_values_red = new int[6];
         int[] tab_values_black = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast
-        if (GameControler.finalPosition(pos_current, computer_play, depth)){
+        if (GameControler.finalPosition(pos_current)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
             for (int i = 0; i < pos_current.cells_red_player.length; i++){
                 pos_current.seeds_red_player += pos_current.cells_red_player[i];
@@ -77,7 +79,7 @@ public class MinMax {
         if (depth == 0){
             int indice_red = 0;
             int indice_black = 0;
-            int indice = 0;
+            int indice;
             // WRITE the code: res contains the MAX of tab_values
             for(int i=0;i<tab_values_red.length;i++){
                 if(res_red < tab_values_red[i]){
@@ -141,7 +143,6 @@ public class MinMax {
         IHM.log("-------\n",2);
         return res;
     }
-
 
     String minMaxMove(Position pos_current, boolean computer_play, int depth, int depthMax){
 

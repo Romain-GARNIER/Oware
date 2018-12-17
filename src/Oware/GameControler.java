@@ -15,10 +15,11 @@ public class GameControler {
 
     public GameControler(){
         sc = new Scanner(System.in);
-        alphaBetaCut = new AlphaBetaCut();
+
         position = new Position();
         position.init();
         minMax = new MinMax(this, position);
+        alphaBetaCut = new AlphaBetaCut(this, position);
     }
 
     public void definePlayer(){
@@ -32,7 +33,7 @@ public class GameControler {
 
     public void startGame(){
 
-        while (!GameControler.finalPosition(position,false,0)){
+        while (!GameControler.finalPosition(position)){
             String move;
 
             IHM.console("---------------------------------------------------------------------------------------------------------------");
@@ -40,8 +41,8 @@ public class GameControler {
             IHM.console("Joueur 1 :");
 
             if(computer_player_one){
-                move = minMax.minMaxMove(position,true,0,6);
-                //hole = alphaBetaCut.AlphaBetaCutValue(position, true, 0, 9, -100, 100);
+                //move = minMax.minMaxMove(position,true,0,6);
+                move = alphaBetaCut.AlphaBetaCutStart(position, true, -1, 8, -100, 100);
                 //IHM.console("coup choisi par le bot : "+(hole+1));
                 IHM.console("coup choisi par le bot : "+move);
             }
@@ -63,13 +64,13 @@ public class GameControler {
 //            if(computer_player_one)
                 IHM.console(position.toString(computer_player_one));
 
-            if(!GameControler.finalPosition(position,false,0)){
+            if(!GameControler.finalPosition(position)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
-                    move = minMax.minMaxMove(position, true, 0, 6);
-                    //hole = alphaBetaCut.AlphaBetaCutValue(position, true, 0, 9, -100, 100);
+                    //move = minMax.minMaxMove(position, true, 0, 6);
+                    move = alphaBetaCut.AlphaBetaCutStart(position, true, -1, 8, -100, 100);
                     IHM.console("coup choisi par le bot : "+move);
                 }
                 else{
@@ -297,7 +298,7 @@ public class GameControler {
         return pos_next;
     }
 
-    public static boolean finalPosition(Position pos, boolean computer_play, int depth){
+    public static boolean finalPosition(Position pos){
         int sum1, sum2;
         sum1 = 0;
         sum2 = 0;
