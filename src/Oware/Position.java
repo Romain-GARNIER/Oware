@@ -75,11 +75,11 @@ class Position {
         }
 
         for(int i=0;i<6;i++){
-            res1 += "|"+(plateau_1_red[i]+plateau_1_black[i]);
-            res2 += "|"+(plateau_2_red[5-i]+plateau_2_black[i]);
+            res1 += "|"+plateau_1_red[i] + "-" + plateau_1_black[i];
+            res2 += "|"+plateau_2_red[5-i]+"-"+plateau_2_black[5-i];
         }
-        res1+="| capturee :" + (nbCaptured_1_red + nbCaptured_1_black) + "\n";
-        res2+="| capturee :" + (nbCaptured_2_red + nbCaptured_2_black) + "\n";
+        res1+="| capturee :" + nbCaptured_1_red + "-" + nbCaptured_1_black + "\n";
+        res2+="| capturee :" + nbCaptured_2_red + "-" + nbCaptured_2_black + "\n";
 
         return res1+res2;
     }
