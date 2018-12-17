@@ -6,6 +6,7 @@ public class GameControler {
     boolean computer_player_one;
     Scanner sc;
     MinMax minMax;
+    AlphaBetaCut alphaBetaCut;
     Position position;
     private static int depthMAX;
 
@@ -14,7 +15,7 @@ public class GameControler {
 
     public GameControler(){
         sc = new Scanner(System.in);
-
+        alphaBetaCut = new AlphaBetaCut();
         position = new Position();
         position.init();
         minMax = new MinMax(this, position);
@@ -40,6 +41,8 @@ public class GameControler {
 
             if(computer_player_one){
                 move = minMax.minMaxMove(position,true,0,6);
+                //hole = alphaBetaCut.AlphaBetaCutValue(position, true, 0, 9, -100, 100);
+                //IHM.console("coup choisi par le bot : "+(hole+1));
                 IHM.console("coup choisi par le bot : "+move);
             }
             else{
@@ -66,7 +69,8 @@ public class GameControler {
 
                 if(!computer_player_one) {
                     move = minMax.minMaxMove(position, true, 0, 6);
-                    IHM.console("coup choisi par le bot : "+(move));
+                    //hole = alphaBetaCut.AlphaBetaCutValue(position, true, 0, 9, -100, 100);
+                    IHM.console("coup choisi par le bot : "+move);
                 }
                 else{
                     IHM.console("Choisissez un trou entre 7 et 12 :");
