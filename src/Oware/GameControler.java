@@ -165,15 +165,17 @@ public class GameControler {
             boolean tmpBool = true;
             if(tmp == 0){
                 // si on revient sur la position de départ, on ne met pas de graine dedans
-                if(holePosition == hole)
+                if(holePosition == hole) {
                     holeStart++;
-                    if (holePosition == 5){ //Mod pour cas holepositon = 6;
+                    position++;
+                    if (holePosition == 5) { //Mod pour cas holepositon = 6;
                         holePosition = 0;
                         plateau_player_2_color_1[holePosition]++;
                         tmpBool = false;
-                    }else{
+                    } else {
                         holePosition++;
                     }
+                }
                 if(tmpBool){
                     plateau_player_1_color_1[holePosition]++;
                 }
@@ -201,15 +203,16 @@ public class GameControler {
             boolean tmpBool = true;
             if(tmp == 0){
                 // si on revient sur la position de départ, on ne met pas de graine dedans
-                if(holePosition == hole)
+                if(holePosition == hole) {
                     holeStart++;
-                    if (holePosition == 5){ //Mod pour cas holepositon = 6;
+                    if (holePosition == 5) { //Mod pour cas holepositon = 6;
                         holePosition = 0;
                         plateau_player_2_color_2[holePosition]++;
                         tmpBool = false;
-                    }else{
+                    } else {
                         holePosition++;
                     }
+                }
                 if(tmpBool){
                     plateau_player_1_color_2[holePosition]++;
                 }
