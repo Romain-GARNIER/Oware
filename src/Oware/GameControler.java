@@ -109,9 +109,17 @@ public class GameControler {
 
     // Joue le coup avec une prise simple sans s'occuper de la continuité
     public static Position playMove(Position pos_current,boolean computer_play, String move){
-        String[] tabMove = move.split("-");
-        int hole = (Integer.parseInt(tabMove[0])-1)%6;
-        String color = tabMove[1];
+        String[] tabMove;
+        int hole, special_seed;
+        String color;
+
+        tabMove = move.split("-");
+        hole = (Integer.parseInt(tabMove[0])-1)%6;
+        color = tabMove[1];
+        special_seed = -1;
+
+        if(tabMove.length == 3)
+            special_seed = Integer.parseInt(tabMove[0]);
 
         Position pos_next = pos_current.clone();
         int[] plateau_player_1_color_1,plateau_player_1_color_2;
@@ -147,6 +155,43 @@ public class GameControler {
                 plateau_player_2_color_1 = pos_current.cells_black_computer.clone();
                 plateau_player_1_color_2 = pos_current.cells_red_player.clone();
                 plateau_player_2_color_2 = pos_current.cells_red_computer.clone();
+            }
+        }
+
+        String[] ordre;
+        String color_2;
+        if(color == COLOR_RED)
+            color_2 = COLOR_BLACK;
+        else
+            color_2 = COLOR_RED;
+
+        if(special_seed == -1){
+            ordre = new String[2];
+            ordre[0] = color;
+            ordre[1] = color_2;
+        }else {
+            ordre = new String[3];
+            switch (special_seed){
+                case 1 :
+                    ordre[0] = "S";
+                    ordre[1] = color;
+                    ordre[2] = color_2;
+                    break;
+                case 2 :
+                    ordre[0] = color;
+                    ordre[1] = "S";
+                    ordre[2] = color_2;
+                case 3 :
+                    ordre[0] = color;
+                    ordre[1] = color_2;
+                    ordre[2] = "S";
+            }
+        }
+
+        for(String color : ordre){
+            switch (color){
+                case COLOR_BLACK :
+
             }
         }
 
@@ -216,7 +261,6 @@ public class GameControler {
                 if(tmpBool){
                     plateau_player_1_color_2[holePosition]++;
                 }
-                enemy_side_1 = false;
                 enemy_side_2 = false;
             }
             else{
@@ -302,6 +346,43 @@ public class GameControler {
             sum2 += pos.cells_red_player[i];
         }
         return sum1 == 0 || sum2 == 0;
+    }
+
+    public int sow(int[] plateau_1, int[] plateau_2, int nb_seed, int hole_start, int hole, boolean enemy_side){
+        int position;
+        int last_hole = -1;
+        for(int i=0;i<nb_seed;i++){
+            position = hole_start + i;
+            // position du trou sur un camp (varie entre 1 et 6)
+            int holePosition = position%6;
+            // renvoi vrai si le reste de la division est paire (pour choisir le camp)
+            int tmp = (position/6)%2;
+            boolean tmpBool = true;
+            if(tmp == 0){
+                // si on revient sur la position de départ, on ne met pas de graine dedans
+                if(holePosition == hole) {
+                    hole_start++;
+                    position++;
+                    if (holePosition == 5) { //Mod pour cas holepositon = 6;
+                        holePosition = 0;
+                        plateau_2[holePosition]++;
+                        tmpBool = false;
+                    } else {
+                        holePosition++;
+                    }
+                }
+                if(tmpBool){
+                    plateau_1[holePosition]++;
+                }
+                enemy_side = false;
+            }
+            else{
+                plateau_2[holePosition]++;
+                enemy_side = true;
+            }
+            last_hole = holePosition;
+        }
+        return last_hole;
     }
 
     public static int evaluation(Position posInit, Position pos){
