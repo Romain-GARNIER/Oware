@@ -21,7 +21,7 @@ class Position {
         pos.computer_play = computer_play;
 
         for(int i = 0; i < cells_player.length; i++){
-            pos.cells_player[i] = cells_computer[i].clone();
+            pos.cells_player[i] = cells_player[i].clone();
             pos.cells_computer[i] = cells_computer[i].clone();
         }
 
