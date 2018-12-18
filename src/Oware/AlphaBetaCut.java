@@ -30,8 +30,18 @@ public class AlphaBetaCut {
         for(String cellC : currentCell){
             for(String couleurC : couleur){
                 String move = cellC + "-" + couleurC;
-                if(GameControler.validMove(pos_current, computer_play, move)){
-                    coupsPossible.add(move);
+                if(GameControler.containsSpecialSeed(pos_current, computer_play, Integer.parseInt(cellC)-1)){
+                    for(int i=1; i<=3;i++){
+                        move = cellC + "-" + couleurC + "-" + i;
+                        if(GameControler.validMove(pos_current, computer_play, move)){
+                            coupsPossible.add(move);
+                        }
+                    }
+
+                }else{
+                    if(GameControler.validMove(pos_current, computer_play, move)){
+                        coupsPossible.add(move);
+                    }
                 }
             }
         }
@@ -55,6 +65,7 @@ public class AlphaBetaCut {
                 bestCoup = coup;
             }
         }
+        IHM.log("MinMax :"+maxValue,1);
         return bestCoup;
     }
 

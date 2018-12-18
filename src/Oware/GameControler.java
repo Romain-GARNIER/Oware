@@ -9,6 +9,7 @@ public class GameControler {
     boolean computer_player_one;
     Scanner sc;
     MinMax minMax;
+    AlphaBetaCut alphaBetaCut;
     Position position;
     private static int depthMAX;
 
@@ -22,6 +23,7 @@ public class GameControler {
         position = new Position();
         position.init();
         minMax = new MinMax(this, position);
+        alphaBetaCut = new AlphaBetaCut(this, position);
     }
 
     public void definePlayer(){
@@ -52,7 +54,10 @@ public class GameControler {
     }
 
     public void startGame(){
-
+        int a = 0;
+        int b = 96;
+        int depth_start = 0;
+        int depth_max = 7;
         while (!GameControler.finalPosition(position)){
             String move;
 
@@ -61,7 +66,8 @@ public class GameControler {
             IHM.console("Joueur 1 :");
 
             if(computer_player_one){
-                move = minMax.minMaxMove(position,true,0,3);
+//                move = minMax.minMaxMove(position,true,0,3);
+                move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                 IHM.console("coup choisi par le bot : "+move);
             }
             else{
@@ -87,7 +93,8 @@ public class GameControler {
                 IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
-                    move = minMax.minMaxMove(position, true, 0, 3);
+//                    move = minMax.minMaxMove(position, true, 0, 3);
+                    move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                     IHM.console("coup choisi par le bot : "+(move));
                 }
                 else{
@@ -498,5 +505,19 @@ public class GameControler {
                 return seeds_player;
             return seeds_computer;
         }
+    }
+
+    public static boolean containsSpecialSeed(Position position, boolean computer_play, int hole){
+        Hole[] tableau;
+        int nb_seeds = -1;
+
+        if(computer_play){
+            tableau = position.cells_computer.clone();
+        }
+        else{
+            tableau = position.cells_player.clone();
+        }
+        nb_seeds = tableau[hole].getNbSeeds(SPECIAL_SEED);
+        return nb_seeds > 0;
     }
 }
