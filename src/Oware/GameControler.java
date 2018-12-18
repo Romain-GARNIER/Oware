@@ -238,22 +238,43 @@ public class GameControler {
 
         boolean stop = false;
         int i = ordre.length-1;
-        String color_seed = SPECIAL_SEED;
+        String color_seed = "";
         boolean enemy = enemy_side.get(i);
+        boolean red_seeds = false;
+        boolean black_seeds = false;
         boolean special_seeds = false;
-        while (!stop && i>0 && enemy){
-            if(color_seed.equals(SPECIAL_SEED)){
+        while (!stop && i>=0 && enemy){
+            if(color_seed == ""){
                 color_seed = ordre[i];
-                if(color_seed.equals(SPECIAL_SEED))
-                    special_seeds = true;
-                else
-                    special_seeds = false;
-            }
-            else {
-                if(!ordre[i].equals(SPECIAL_SEED)){
-                    stop = true;
-                }else{
-                    special_seeds = true;
+            }else{
+                if(color_seed.equals(SPECIAL_SEED)){
+                    switch (ordre[i]){
+                        case COLOR_RED :
+                            red_seeds = true;
+                            black_seeds = false;
+                            special_seeds = false;
+                            break;
+                        case COLOR_BLACK :
+                            red_seeds = true;
+                            black_seeds = false;
+                            special_seeds = false;
+                            break;
+                    }
+                    /*
+                    if(color_seed.equals(SPECIAL_SEED))
+                        special_seeds = true;
+                    else
+                        special_seeds = false;
+                        */
+                }
+                else {
+                    if(!ordre[i].equals(SPECIAL_SEED)){
+                        stop = true;
+                    }else{
+                        red_seeds = false;
+                        black_seeds = false;
+                        special_seeds = true;
+                    }
                 }
             }
             if(!stop){
@@ -275,6 +296,10 @@ public class GameControler {
                         capture_black = true;
                         break;
                 }
+                if(red_seeds)
+                    nb_seeds = nb_red_seeds;
+                if(black_seeds)
+                    nb_seeds = nb_black_seeds;
                 if(special_seeds)
                     nb_seeds = nb_special_seeds;
                 int j = lasts_hole.get(i);
@@ -394,7 +419,7 @@ public class GameControler {
         nb_seeds.add(nb_red_seeds);
         nb_seeds.add(nb_black_seeds);
         nb_seeds.add(nb_special_seeds);
-        if (red_seeds && black_seeds) {
+        if (red_seeds && black_seeds && special_seeds) {
             if (nb_red_seeds > 0 && nb_red_seeds > 0) {
                 if ((nb_red_seeds == 1 || nb_red_seeds == 2) && (nb_black_seeds == 1 || nb_black_seeds == 2)) {
                     plateau[hole].setNbSeeds(COLOR_RED, 0);
@@ -414,17 +439,38 @@ public class GameControler {
                 return COLOR_BLACK;
             }
         }else {
-            if (red_seeds && nb_red_seeds > 0 && (nb_red_seeds == 2 || nb_red_seeds == 3)) {
-                plateau[hole].setNbSeeds(COLOR_RED, 0);
-                if(special_seeds)
+            if (red_seeds && black_seeds && !special_seeds) {
+                if (nb_red_seeds > 0 && nb_red_seeds > 0) {
+                    if ((nb_red_seeds == 2 || nb_red_seeds == 3) && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
+                        plateau[hole].setNbSeeds(COLOR_RED, 0);
+                        plateau[hole].setNbSeeds(COLOR_BLACK, 0);
+                        plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
+                        return SPECIAL_SEED;
+                    }
+                }
+                if (nb_red_seeds > 0 && (nb_red_seeds == 2 || nb_red_seeds == 3)) {
+                    plateau[hole].setNbSeeds(COLOR_RED, 0);
                     plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                return COLOR_RED;
-            }
-            if (black_seeds && nb_black_seeds > 0 && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
-                plateau[hole].setNbSeeds(COLOR_BLACK, 0);
-                if(special_seeds)
+                    return COLOR_RED;
+                }
+                if (nb_black_seeds > 0 && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
+                    plateau[hole].setNbSeeds(COLOR_BLACK, 0);
                     plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                return COLOR_BLACK;
+                    return COLOR_BLACK;
+                }
+            } else {
+                if (red_seeds && nb_red_seeds > 0 && (nb_red_seeds == 2 || nb_red_seeds == 3)) {
+                    plateau[hole].setNbSeeds(COLOR_RED, 0);
+                    if (special_seeds)
+                        plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
+                    return COLOR_RED;
+                }
+                if (black_seeds && nb_black_seeds > 0 && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
+                    plateau[hole].setNbSeeds(COLOR_BLACK, 0);
+                    if (special_seeds)
+                        plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
+                    return COLOR_BLACK;
+                }
             }
         }
         return "-1";
