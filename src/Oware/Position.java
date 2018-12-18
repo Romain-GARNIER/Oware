@@ -40,8 +40,8 @@ class Position {
 
     public void init(){
         for(int i=0;i<6;i++){
-            cells_player[i] = new Hole(2,2,0);
-            cells_computer[i] = new Hole(2,2,0);
+            cells_player[i] = new Hole(3,3,0);
+            cells_computer[i] = new Hole(3,3,0);
         }
     }
 
