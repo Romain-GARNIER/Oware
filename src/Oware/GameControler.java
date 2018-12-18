@@ -44,12 +44,15 @@ public class GameControler {
 
         int depth = 0;
         int deptTop = 5;
-        /*
+
         if (this.computer_player_one){
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
             hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
+
             IHM.console("Joueur 1 a choisie : " + (hole+1));
             defineSpecialSeed(computer_player_one, hole);
+
+
             IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
             hole = sc.nextInt();
             defineSpecialSeed(!computer_player_one, hole-1);
@@ -58,11 +61,13 @@ public class GameControler {
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
             hole = sc.nextInt();
             defineSpecialSeed(computer_player_one, hole-1);
+
+
             IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
             hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
             defineSpecialSeed(!computer_player_one, hole);
             IHM.console("Joueur 2 a choisie : " + (hole+1));
-        }*/
+        }
         IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
         hole = sc.nextInt();
         defineSpecialSeed(computer_player_one, hole-1);
@@ -84,13 +89,12 @@ public class GameControler {
             IHM.console("---------------------------------------------------------------------------------------------------------------");
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
-/*
+
             if(computer_player_one){
-//                move = minMax.minMaxMove(position,true,0,3);
                 move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                 IHM.console("coup choisi par le bot : "+move);
             }
-            else{*/
+            else{
                 IHM.console("Choisissez un trou entre 1 et 6 :");
                 move = sc.next();
                 if(!validMove(position,false,move)){
@@ -100,24 +104,20 @@ public class GameControler {
                         move = sc.next();
                     }
                 }
-//            }
+            }
             position = GameControler.playMove(position,computer_player_one,move);
 
-//            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
-
-//            if(computer_player_one)
             IHM.console(position.toString(computer_player_one));
 
             if(!GameControler.finalPosition(position)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
-/*
+
                 if(!computer_player_one) {
-//                    move = minMax.minMaxMove(position, true, 0, 3);
                     move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                     IHM.console("coup choisi par le bot : "+(move));
                 }
-                else{*/
+                else{
                     IHM.console("Choisissez un trou entre 7 et 12 :");
                     move = sc.next();
                     if(!validMove(position,false,move)){
@@ -127,7 +127,7 @@ public class GameControler {
                             move = sc.next();
                         }
                     }
-//                }
+                }
 
                 position = GameControler.playMove(position,!computer_player_one,move);
 
@@ -244,7 +244,7 @@ public class GameControler {
                 }
             }
         }
-
+/*
         boolean stop = false;
         int i = ordre.length-1;
         String color_seed = "";
@@ -271,12 +271,12 @@ public class GameControler {
                             special_seeds = false;
                             break;
                     }
-                    /*
-                    if(color_seed.equals(SPECIAL_SEED))
-                        special_seeds = true;
-                    else
-                        special_seeds = false;
-                        */
+
+                    //if(color_seed.equals(SPECIAL_SEED))
+                    //    special_seeds = true;
+                    //else
+                    //    special_seeds = false;
+
                 }
                 else {
                     if(!ordre[i].equals(SPECIAL_SEED)){
@@ -344,6 +344,7 @@ public class GameControler {
                 i--;
             }
         }
+        */
 
         if(computer_play){
             pos_next.cells_player = plateau_player_2;
@@ -679,6 +680,25 @@ public class GameControler {
                 return seeds_player;
             return seeds_computer;
         }
+    }
+
+    public int fixDepth(Position position){
+        int depth = 0;
+        int res = 0;
+        for(int i=0; i<6; i++){
+            res += position.cells_computer[i].totalSeeds();
+        }
+        if (res >= 36){
+            depth = (int) Math.floor(res/6);
+        }
+        if (res < 36){
+            depth = (int) Math.floor(res/6) + 2;
+        }
+
+        if (depth % 2 != 0){
+            depth += 1;
+        }
+        return depth;
     }
 
     public static boolean containsSpecialSeed(Position position, boolean computer_play, int hole){
