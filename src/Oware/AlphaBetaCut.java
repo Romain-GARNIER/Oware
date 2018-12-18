@@ -2,6 +2,8 @@ package Oware;
 
 
 
+import javafx.geometry.Pos;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -30,7 +32,8 @@ public class AlphaBetaCut {
         for(String cellC : currentCell){
             for(String couleurC : couleur){
                 String move = cellC + "-" + couleurC;
-                if(GameControler.containsSpecialSeed(pos_current, computer_play, Integer.parseInt(cellC)-1)){
+                int cellCS = (gc.computer_player_one) ? 0 : 6;
+                if(GameControler.containsSpecialSeed(pos_current, computer_play, Integer.parseInt(cellC)-1-cellCS)){
                     for(int i=1; i<=3;i++){
                         move = cellC + "-" + couleurC + "-" + i;
                         if(GameControler.validMove(pos_current, computer_play, move)){
@@ -47,6 +50,33 @@ public class AlphaBetaCut {
         }
 
         return coupsPossible;
+    }
+
+    int AlphBetaCutSeed(Position pos_current, boolean computer_play,int depth, int depthMax, int a, int b){
+        int bestCell = 0;
+        Position pos_next;
+        int maxValue = -10000;
+
+        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0,1 ,2 ,3 ,4 ,5));
+        ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
+
+        for (int cell : cellPossible){
+            Position posFictif = pos_current.clone();
+            if(computer_play)
+                posFictif.cells_computer[cell].setSpecialSeed(1);
+            else
+                posFictif.cells_player[cell].setSpecialSeed(1);
+            for (String coup : coupPossible) {
+                pos_next = GameControler.playMove(posFictif, computer_play, coup);
+                int value = AlphaBetaCutValue(pos_next, !computer_play, depth + 1, depthMax, a, b);
+                System.out.println(value);
+                if (maxValue < value || (maxValue == value && new Random().nextInt() % 2 == 0)) {
+                    maxValue = value;
+                    bestCell = cell;
+                }
+            }
+        }
+        return bestCell;
     }
 
     String AlphaBetaCutStart(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b) {

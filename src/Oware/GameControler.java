@@ -1,9 +1,6 @@
 package Oware;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class GameControler {
     boolean computer_player_one;
@@ -44,13 +41,25 @@ public class GameControler {
 
     public void initSpecialSeeds(){
         int hole;
-        IHM.console("Choisissez un trou pour la graine spéciale :");
-        hole = sc.nextInt();
-        defineSpecialSeed(computer_player_one, hole-1);
 
-        IHM.console("Choisissez un trou pour la graine spéciale :");
-        hole = sc.nextInt();
-        defineSpecialSeed(!computer_player_one, hole-1);
+        if (this.computer_player_one){
+            IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
+            hole = alphaBetaCut.AlphBetaCutSeed(position, true, 0, 4, 0, 96);
+            IHM.console("Joueur 1 a choisie : " + (hole+1));
+            defineSpecialSeed(computer_player_one, hole);
+            IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
+            hole = sc.nextInt();
+            defineSpecialSeed(!computer_player_one, hole-1);
+        }
+        else{
+            IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
+            hole = sc.nextInt();
+            defineSpecialSeed(!computer_player_one, hole-1);
+            IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
+            hole = alphaBetaCut.AlphBetaCutSeed(position, true, 0, 4, 0, 96);
+            defineSpecialSeed(!computer_player_one, hole);
+            IHM.console("Joueur 2 a choisie : " + (hole+1));
+        }
     }
 
     public void startGame(){
@@ -60,6 +69,7 @@ public class GameControler {
         int depth_max = 7;
         while (!GameControler.finalPosition(position)){
             String move;
+            alphaBetaCut.setPosInit(position);
 
             IHM.console("---------------------------------------------------------------------------------------------------------------");
             IHM.console(position.toString(computer_player_one));
@@ -432,7 +442,6 @@ public class GameControler {
 
     public static int evaluation(Position posInit, Position pos){
         int eval = 1;
-//        if(computer_play){
 
         //                                  SEED
         int seeds_player = (pos.seeds_red_player + pos.seeds_black_player + pos.captured_special_seed_player);
@@ -440,6 +449,9 @@ public class GameControler {
 
         int seeds_computer = (pos.seeds_red_computer + pos.seeds_black_computer + pos.captured_special_seed_computer);
         int seeds_computerInit = posInit.seeds_red_computer + posInit.seeds_black_computer + pos.captured_special_seed_computer;
+
+
+        //                                  PARTIE EN COUR
 
         //                                  CELL
         //      PLAYER
@@ -455,20 +467,34 @@ public class GameControler {
 
         //*                             Prise en compte que avancer Joueur Courant
 
-//        //** Prise en compte graine capturer
-//        if (seeds_player - seeds_playerInit > 0){
-//            eval += (seeds_player - seeds_playerInit)*2;
-//        }
-//
-//        //** Prise en compte graine capturer
-//        if (cell_player > cell_computer){
-//            eval += (cell_player -  cell_computer);
-//        }
+        //** Prise en compte graine capturer
+        if (seeds_computer - seeds_computerInit > 0){
+            eval += (seeds_computer - seeds_computerInit)*4;
+        }
 
-        seeds_computer += cell_computer;
-        seeds_player += cell_player;
+        if (seeds_player - seeds_playerInit > 0){
+            eval += -(seeds_player - seeds_playerInit)*2;
+        }
 
-        eval = seeds_computer - seeds_player;
+        //** Prise en compte graine capturer
+        if (cell_computer > cell_player){
+            eval += (cell_computer - cell_player);
+        }
+
+        //                                     FIN
+        int sum1, sum2;
+        sum1 = 0;
+        sum2 = 0;
+        for(int i=0;i<6;i++){
+            sum1 += pos.cells_computer[i].totalSeeds();
+            sum2 += pos.cells_player[i].totalSeeds();
+        }
+
+        if(sum1 == 0){
+            eval = -96;
+        }else if (sum2 == 0){
+            eval = 96;
+        }
 
         return eval;
     }
@@ -509,7 +535,7 @@ public class GameControler {
 
     public static boolean containsSpecialSeed(Position position, boolean computer_play, int hole){
         Hole[] tableau;
-        int nb_seeds = -1;
+        int nb_seeds;
 
         if(computer_play){
             tableau = position.cells_computer.clone();
