@@ -69,7 +69,7 @@ public class AlphaBetaCut {
             for (String coup : coupPossible) {
                 pos_next = GameControler.playMove(posFictif, computer_play, coup);
                 int value = AlphaBetaCutValue(pos_next, !computer_play, depth + 1, depthMax, a, b);
-                System.out.println(value);
+                //System.out.println(value);
                 if (maxValue < value || (maxValue == value && new Random().nextInt() % 2 == 0)) {
                     maxValue = value;
                     bestCell = cell;

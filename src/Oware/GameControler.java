@@ -42,9 +42,11 @@ public class GameControler {
     public void initSpecialSeeds(){
         int hole;
 
+        int depth = 0;
+        int deptTop = 5;
         if (this.computer_player_one){
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
-            hole = alphaBetaCut.AlphBetaCutSeed(position, true, 0, 4, 0, 96);
+            hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
             IHM.console("Joueur 1 a choisie : " + (hole+1));
             defineSpecialSeed(computer_player_one, hole);
             IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
@@ -54,9 +56,9 @@ public class GameControler {
         else{
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
             hole = sc.nextInt();
-            defineSpecialSeed(!computer_player_one, hole-1);
+            defineSpecialSeed(computer_player_one, hole-1);
             IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
-            hole = alphaBetaCut.AlphBetaCutSeed(position, true, 0, 4, 0, 96);
+            hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
             defineSpecialSeed(!computer_player_one, hole);
             IHM.console("Joueur 2 a choisie : " + (hole+1));
         }
@@ -256,6 +258,8 @@ public class GameControler {
         while (!stop && i>=0 && enemy){
             if(color_seed == ""){
                 color_seed = ordre[i];
+                if(color_seed.equals(SPECIAL_SEED))
+                    special_seeds = true;
             }else{
                 if(color_seed.equals(SPECIAL_SEED)){
                     switch (ordre[i]){
