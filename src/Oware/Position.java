@@ -1,20 +1,16 @@
 package Oware;
 
+import java.lang.reflect.Array;
+
 class Position {
     boolean computer_play; // boolean true if the computer has to play and false otherwise
-    int cells_black_computer[] = new int[6];
-    int cells_red_computer[] = new int[6];
-    int special_seed_computer[] = new int[6];
-
-    int cells_red_player[] = new int[6]; // each cell contains a certain number of seeds
-    int cells_black_player[] = new int[6]; // each cell contains a certain number of seeds
-    int special_seed_player[] = new int[6];
+    Hole[] cells_computer = new Hole[6];
+    Hole[] cells_player = new Hole[6]; // each cell contains a certain number of seeds
 
     int seeds_red_player; // seeds taken by the player
     int seeds_red_computer; // seeds taken by the computer
     int seeds_black_player; // seeds taken by the player
     int seeds_black_computer; // seeds taken by the computer
-
     int captured_special_seed_computer;
     int captured_special_seed_player;
 
@@ -24,13 +20,10 @@ class Position {
 
         pos.computer_play = computer_play;
 
-        pos.cells_red_computer = cells_red_computer.clone();
-        pos.cells_red_player = cells_red_player.clone();
-        pos.cells_black_computer = cells_black_computer.clone();
-        pos.cells_black_player = cells_black_player.clone();
-
-        pos.special_seed_computer = special_seed_computer.clone();
-        pos.special_seed_player = special_seed_player.clone();
+        for(int i = 0; i < cells_player.length; i++){
+            pos.cells_player[i] = cells_computer[i].clone();
+            pos.cells_computer[i] = cells_computer[i].clone();
+        }
 
         pos.seeds_red_player = seeds_red_player;
         pos.seeds_red_computer = seeds_red_computer;
@@ -47,10 +40,8 @@ class Position {
 
     public void init(){
         for(int i=0;i<6;i++){
-            cells_red_player[i] = 3;
-            cells_red_computer[i] = 3;
-            cells_black_player[i] = 3;
-            cells_black_computer[i] = 3;
+            cells_player[i] = new Hole(2,2,0);
+            cells_computer[i] = new Hole(2,2,0);
         }
     }
 
@@ -58,23 +49,20 @@ class Position {
         String res ="";
         String res1 = "";
         String res2 = "";
-        int[] plateau_1_red, plateau_1_black, plateau_1_special_seed;
-        int[] plateau_2_red, plateau_2_black, plateau_2_special_seed;
+        Hole[] plateau_1;
+        Hole[] plateau_2;
         int nbCaptured_1_red, nbCaptured_1_black;
         int nbCaptured_2_red, nbCaptured_2_black;
         int nb_captured_special_seed_1, nb_captured_special_seed_2;
         //res += " - - - - - -\n";
 
         if(computer_player_one){
-            plateau_1_red = cells_red_computer.clone();
-            plateau_2_red = cells_red_player.clone();
-            plateau_1_black = cells_black_computer.clone();
-            plateau_2_black = cells_black_player.clone();
-            plateau_1_special_seed = special_seed_computer.clone();
-            plateau_2_special_seed = special_seed_player.clone();
+            plateau_1 = cells_computer.clone();
+            plateau_2 = cells_player.clone();
 
             nbCaptured_1_red = seeds_red_computer;
             nbCaptured_2_red = seeds_red_player;
+
             nbCaptured_1_black = seeds_black_computer;
             nbCaptured_2_black = seeds_black_player;
 
@@ -83,12 +71,8 @@ class Position {
 
         }
         else{
-            plateau_1_red = cells_red_player.clone();
-            plateau_2_red = cells_red_computer.clone();
-            plateau_1_black = cells_black_player.clone();
-            plateau_2_black = cells_black_computer.clone();
-            plateau_1_special_seed = special_seed_player.clone();
-            plateau_2_special_seed = special_seed_computer.clone();
+            plateau_1 = cells_player.clone();
+            plateau_2 = cells_computer.clone();
 
             nbCaptured_1_red = seeds_red_player;
             nbCaptured_2_red = seeds_red_computer;
@@ -100,8 +84,8 @@ class Position {
         }
 
         for(int i=0;i<6;i++){
-            res1 += "|"+plateau_1_red[i] + "-" + plateau_1_black[i] + "-" + plateau_1_special_seed[i];
-            res2 += "|"+plateau_2_red[5-i] + "-" + plateau_2_black[5-i] + "-" + plateau_2_special_seed[5-i];
+            res1 += "|"+plateau_1[i].toString();
+            res2 += "|"+plateau_2[5-i].toString();
         }
         res1+="| capturee :" + nbCaptured_1_red + "-" + nbCaptured_1_black + "-" + nb_captured_special_seed_1 + "\n";
         res2+="| capturee :" + nbCaptured_2_red + "-" + nbCaptured_2_black + "-" + nb_captured_special_seed_2 + "\n";

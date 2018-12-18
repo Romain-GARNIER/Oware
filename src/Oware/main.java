@@ -11,6 +11,8 @@ public class main{
         IHM.console("Joueur 1 (1) / Joueur 2 (2) ? :");
         gameControler.definePlayer();
 
+        gameControler.initSpecialSeeds();
+
         gameControler.startGame();
         IHM.console(gameControler.position.toString());
 

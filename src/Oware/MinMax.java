@@ -20,14 +20,14 @@ public class MinMax {
         int[] tab_values_red = new int[6];
         int[] tab_values_black = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast
-        if (GameControler.finalPosition(pos_current, computer_play, depth)){
+        if (GameControler.finalPosition(pos_current)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
-            for (int i = 0; i < pos_current.cells_red_player.length; i++){
-                pos_current.seeds_red_player += pos_current.cells_red_player[i];
+            for (int i = 0; i < pos_current.cells_player.length; i++){
+                pos_current.seeds_red_player += pos_current.cells_player[i].totalSeeds();
             }
 
-            for (int i = 0; i < pos_current.cells_red_computer.length; i++){
-                pos_current.seeds_red_computer += pos_current.cells_red_computer[i];
+            for (int i = 0; i < pos_current.cells_computer.length; i++){
+                pos_current.seeds_red_computer += pos_current.cells_computer[i].totalSeeds();
             }
 
             if(pos_current.seeds_red_computer > pos_current.seeds_red_player)
@@ -167,7 +167,6 @@ public class MinMax {
                 if (computer_play) tab_values_red[i]=-100;
                 else tab_values_red[i]=+100;
             }
-
             move = (i+1)+"-B";
             if (GameControler.validMove(pos_current, computer_play,move)){
                 // WRITE function playMove(&pos_next,pos_current, computer_play,i)
