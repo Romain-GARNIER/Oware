@@ -44,6 +44,7 @@ public class GameControler {
 
         int depth = 0;
         int deptTop = 5;
+        /*
         if (this.computer_player_one){
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
             hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
@@ -61,7 +62,14 @@ public class GameControler {
             hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
             defineSpecialSeed(!computer_player_one, hole);
             IHM.console("Joueur 2 a choisie : " + (hole+1));
-        }
+        }*/
+        IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
+        hole = sc.nextInt();
+        defineSpecialSeed(computer_player_one, hole-1);
+        IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
+        hole = sc.nextInt();
+        defineSpecialSeed(!computer_player_one, hole-1);
+        IHM.console("Joueur 2 a choisie : " + (hole));
     }
 
     public void startGame(){
@@ -76,13 +84,13 @@ public class GameControler {
             IHM.console("---------------------------------------------------------------------------------------------------------------");
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
-
+/*
             if(computer_player_one){
 //                move = minMax.minMaxMove(position,true,0,3);
                 move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                 IHM.console("coup choisi par le bot : "+move);
             }
-            else{
+            else{*/
                 IHM.console("Choisissez un trou entre 1 et 6 :");
                 move = sc.next();
                 if(!validMove(position,false,move)){
@@ -92,7 +100,7 @@ public class GameControler {
                         move = sc.next();
                     }
                 }
-            }
+//            }
             position = GameControler.playMove(position,computer_player_one,move);
 
 //            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
@@ -103,13 +111,13 @@ public class GameControler {
             if(!GameControler.finalPosition(position)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
-
+/*
                 if(!computer_player_one) {
 //                    move = minMax.minMaxMove(position, true, 0, 3);
                     move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                     IHM.console("coup choisi par le bot : "+(move));
                 }
-                else{
+                else{*/
                     IHM.console("Choisissez un trou entre 7 et 12 :");
                     move = sc.next();
                     if(!validMove(position,false,move)){
@@ -119,7 +127,7 @@ public class GameControler {
                             move = sc.next();
                         }
                     }
-                }
+//                }
 
                 position = GameControler.playMove(position,!computer_player_one,move);
 
@@ -153,7 +161,10 @@ public class GameControler {
         nb_seeds_color = tableau[hole].getNbSeeds(color);
         if(special_seed != -1){
             nb_seeds_special = tableau[hole].getNbSeeds(SPECIAL_SEED);
-            return nb_seeds_color > 0 && nb_seeds_special > 0;
+            if(nb_seeds_special > 1)
+                return nb_seeds_color > 0 && nb_seeds_special > 0;
+            else
+                return nb_seeds_special > 0;
         }
         return nb_seeds_color > 0;
     }
@@ -163,7 +174,7 @@ public class GameControler {
         String[] tabMove;
         int hole, special_seed;
         int last_hole = -1;
-        String color;
+        String color, color_2;
 
         Position pos_next = pos_current.clone();
         Hole[] plateau_player_1;
@@ -182,7 +193,7 @@ public class GameControler {
         special_seed = -1;
 
         if(tabMove.length == 3)
-            special_seed = Integer.parseInt(tabMove[2]);
+            special_seed = Integer.parseInt(tabMove[2])-1;
 
         if(computer_play){
             plateau_player_1 = pos_next.cells_computer;
@@ -193,58 +204,44 @@ public class GameControler {
             plateau_player_2 = pos_next.cells_computer;
         }
 
-        String[] ordre;
-        String color_2;
-        if(color.equals(COLOR_RED))
-            color_2 = COLOR_BLACK;
-        else
-            color_2 = COLOR_RED;
-
-        if(special_seed == -1){
-            ordre = new String[2];
-            ordre[0] = color;
-            ordre[1] = color_2;
-        }else {
-            ordre = new String[3];
-            switch (special_seed){
-                case 1 :
-                    ordre[0] = SPECIAL_SEED;
-                    ordre[1] = color;
-                    ordre[2] = color_2;
-                    break;
-                case 2 :
-                    ordre[0] = color;
-                    ordre[1] = SPECIAL_SEED;
-                    ordre[2] = color_2;
-                    break;
-                case 3 :
-                    ordre[0] = color;
-                    ordre[1] = color_2;
-                    ordre[2] = SPECIAL_SEED;
-                    break;
-            }
-        }
-
+        int nb_total_seeds;
         int nb_red_seeds = plateau_player_1[hole].getNbSeeds(COLOR_RED);
         int nb_black_seeds = plateau_player_1[hole].getNbSeeds(COLOR_BLACK);
         int nb_special_seeds = plateau_player_1[hole].getNbSeeds(SPECIAL_SEED);
-        for(String color_seed : ordre){
-            hole_start = hole+1;
-            if(last_hole != -1)
-                hole_start = last_hole+1;
-            switch (color_seed){
-                case COLOR_RED :
-                    last_hole = sow(plateau_player_1, plateau_player_2, nb_red_seeds,hole_start, hole, enemy_side, COLOR_RED);
-                    lasts_hole.add(last_hole);
-                    break;
-                case COLOR_BLACK :
-                    last_hole = sow(plateau_player_1, plateau_player_2, nb_black_seeds,hole_start, hole, enemy_side, COLOR_BLACK);
-                    lasts_hole.add(last_hole);
-                    break;
-                case SPECIAL_SEED :
-                    last_hole = sow(plateau_player_1, plateau_player_2, nb_special_seeds,hole_start, hole, enemy_side, SPECIAL_SEED);
-                    lasts_hole.add(last_hole);
-                    break;
+
+        int nb_seeds_1;
+        int nb_seeds_2;
+
+        if(color.equals(COLOR_RED)){
+            nb_seeds_1 = nb_red_seeds;
+            nb_seeds_2 = nb_black_seeds;
+            color_2 = COLOR_BLACK;
+        }
+        else {
+            nb_seeds_1 = nb_black_seeds;
+            nb_seeds_2 = nb_red_seeds;
+            color_2 = COLOR_RED;
+        }
+
+        int nb_hole = 0;
+
+        nb_total_seeds = nb_red_seeds + nb_black_seeds + nb_special_seeds;
+        hole_start = hole+1;
+        for(int i =0; i < nb_total_seeds;i++){
+            hole_start = hole+nb_hole+1;
+            if(special_seed == i){
+                if(nb_special_seeds > 0){
+                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,SPECIAL_SEED);
+                    nb_special_seeds--;
+                }
+            }else{
+                if(nb_seeds_1 > 0){
+                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color);
+                    nb_seeds_1--;
+                }else if(nb_seeds_2 > 0){
+                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color);
+                    nb_seeds_2--;
+                }
             }
         }
 
@@ -377,9 +374,10 @@ public class GameControler {
         return sum1 == 0 || sum2 == 0;
     }
 
-    public static int sow(Hole[] plateau_1, Hole[] plateau_2, int nb_seed, int hole_start, int hole, ArrayList<Boolean> enemy_side_list, String color){
+    public static int sow(Hole[] plateau_1, Hole[] plateau_2, int nb_seed, int hole_start, int hole, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color, int special_seed){
         int position;
         int last_hole = -1;
+        int nb_hole = -1;
         int enemy_indice;
         boolean enemy_side = false;
         if(!enemy_side_list.isEmpty())
@@ -389,19 +387,25 @@ public class GameControler {
 
         enemy_side_list.add(false);
         enemy_indice = enemy_side_list.size()-1;
-
+/*
+        if(hole_start == 6 && enemy_side){
+            hole_start = 0;
+        }
+*/
         for(int i=0;i<nb_seed;i++){
             position = hole_start + i;
             // position du trou sur un camp (varie entre 1 et 6)
             int holePosition = position%6;
             // renvoi vrai si le reste de la division est paire (pour choisir le camp)
             int tmp = (position/6)%2;
+
             boolean tmpBool = true;
-            if(tmp == 0 && !enemy_side){
+            if(tmp == 0){
                 // si on revient sur la position de départ, on ne met pas de graine dedans
                 if(holePosition == hole) {
                     hole_start++;
                     position++;
+                    nb_hole++;
                     if (holePosition == 5) { //Mod pour cas holepositon = 6;
                         holePosition = 0;
                         plateau_2[holePosition].addSeeds(1,color);
@@ -420,8 +424,57 @@ public class GameControler {
                 enemy_side_list.set(enemy_indice,true);
             }
             last_hole = holePosition;
+            nb_hole++;
         }
-        return last_hole;
+        lasts_hole.add(last_hole);
+        return nb_hole;
+    }
+
+    public static int sowHole(Hole[] plateau_1, Hole[] plateau_2, int hole, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color){
+        int position;
+        int last_hole = -1;
+        int nb_hole = -1;
+        int enemy_indice;
+
+        plateau_1[hole].setAllSeeds(0);
+
+        enemy_side_list.add(false);
+        enemy_indice = enemy_side_list.size()-1;
+
+        position = hole;
+
+        // position du trou sur un camp (varie entre 1 et 6)
+        int holePosition = position%6;
+        // renvoi vrai si le reste de la division est paire (pour choisir le camp)
+        int tmp = (position/6)%2;
+
+        boolean tmpBool = true;
+        if(tmp == 0){
+            // si on revient sur la position de départ, on ne met pas de graine dedans
+            if(holePosition == hole) {
+                position++;
+                nb_hole++;
+                if (holePosition == 5) { //Mod pour cas holepositon = 6;
+                    holePosition = 0;
+                    plateau_2[holePosition].addSeeds(1,color);
+                    tmpBool = false;
+                } else {
+                    holePosition++;
+                }
+            }
+            if(tmpBool){
+                plateau_1[holePosition].addSeeds(1,color);
+            }
+            Collections.replaceAll(enemy_side_list,true,false);
+        }
+        else{
+            plateau_2[holePosition].addSeeds(1,color);
+            enemy_side_list.set(enemy_indice,true);
+        }
+        last_hole = holePosition;
+        nb_hole++;
+        lasts_hole.add(last_hole);
+        return nb_hole;
     }
 
     public static String collect_seeds(Hole[] plateau, boolean red_seeds, boolean black_seeds, int hole, ArrayList<Integer> nb_seeds, boolean special_seeds) {
@@ -488,6 +541,51 @@ public class GameControler {
             }
         }
         return "-1";
+    }
+
+    public static Seed[] getTabSeeds(Hole[] plateau, int hole, String first_color, int special_seed_hole){
+        int nb_red_seeds;
+        int nb_black_seeds;
+        int nb_special_seeds;
+
+        int nb_seeds_1 = 0;
+        String color_seeds_1 = "";
+
+        int nb_seeds_2 = 0;
+        String color_seeds_2 = "";
+
+        Seed[] tab_seeds;
+
+        nb_red_seeds = plateau[hole].nb_red_seeds;
+        nb_black_seeds = plateau[hole].nb_black_seeds;
+        nb_special_seeds = plateau[hole].nb_special_seeds;
+
+        tab_seeds = new Seed[nb_black_seeds+nb_red_seeds+nb_special_seeds];
+
+        if(first_color.equals(COLOR_RED)){
+            color_seeds_1 = COLOR_RED;
+            nb_seeds_1 = nb_red_seeds;
+            color_seeds_2 = COLOR_BLACK;
+            nb_seeds_2 = nb_black_seeds;
+        }else {
+            color_seeds_1 = COLOR_BLACK;
+            nb_seeds_1 = nb_black_seeds;
+            color_seeds_2 = COLOR_RED;
+            nb_seeds_2 = nb_red_seeds;
+        }
+        int indice = 0;
+        for(int i=0;i<nb_seeds_1;i++){
+            if(special_seed_hole == indice){
+
+            }
+            tab_seeds[i] = new Seed(color_seeds_1);
+            indice = i;
+        }
+        indice++;
+        for(int i=0;i<nb_seeds_2;i++){
+            tab_seeds[indice+i] = new Seed(color_seeds_2);
+        }
+        return tab_seeds;
     }
 
     public static int evaluation(Position posInit, Position pos){
