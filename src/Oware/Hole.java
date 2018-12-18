@@ -1,5 +1,7 @@
 package Oware;
 
+import java.util.Comparator;
+
 public class Hole
 {
 

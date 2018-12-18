@@ -47,8 +47,11 @@ public class GameControler {
         if (this.computer_player_one){
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
             hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
+
             IHM.console("Joueur 1 a choisie : " + (hole+1));
             defineSpecialSeed(computer_player_one, hole);
+
+
             IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
             hole = sc.nextInt();
             defineSpecialSeed(!computer_player_one, hole-1);
@@ -57,6 +60,8 @@ public class GameControler {
             IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
             hole = sc.nextInt();
             defineSpecialSeed(computer_player_one, hole-1);
+
+
             IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
             hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
             defineSpecialSeed(!computer_player_one, hole);
@@ -77,8 +82,9 @@ public class GameControler {
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
 
+
+
             if(computer_player_one){
-//                move = minMax.minMaxMove(position,true,0,3);
                 move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                 IHM.console("coup choisi par le bot : "+move);
             }
@@ -95,9 +101,6 @@ public class GameControler {
             }
             position = GameControler.playMove(position,computer_player_one,move);
 
-//            System.out.println("MinMax : "+minMax.minMaxValue(position,!gameControler.computer_player_one,0,3));
-
-//            if(computer_player_one)
             IHM.console(position.toString(computer_player_one));
 
             if(!GameControler.finalPosition(position)){
@@ -105,7 +108,6 @@ public class GameControler {
                 IHM.console("Joueur 2 :");
 
                 if(!computer_player_one) {
-//                    move = minMax.minMaxMove(position, true, 0, 3);
                     move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
                     IHM.console("coup choisi par le bot : "+(move));
                 }
@@ -581,6 +583,25 @@ public class GameControler {
                 return seeds_player;
             return seeds_computer;
         }
+    }
+
+    public int fixDepth(Position position){
+        int depth = 0;
+        int res = 0;
+        for(int i=0; i<6; i++){
+            res += position.cells_computer[i].totalSeeds();
+        }
+        if (res >= 36){
+            depth = (int) Math.floor(res/6);
+        }
+        if (res < 36){
+            depth = (int) Math.floor(res/6) + 2;
+        }
+
+        if (depth % 2 != 0){
+            depth += 1;
+        }
+        return depth;
     }
 
     public static boolean containsSpecialSeed(Position position, boolean computer_play, int hole){

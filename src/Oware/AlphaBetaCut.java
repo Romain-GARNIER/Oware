@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class AlphaBetaCut {
@@ -52,6 +53,44 @@ public class AlphaBetaCut {
         return coupsPossible;
     }
 
+    ArrayList<String> sortCoupPossible(ArrayList<String> coupPossible, ArrayList<String> bestMove){
+        ArrayList<String> res = new ArrayList<>();
+        ArrayList<String> copyCoupPossible = new ArrayList<String>(coupPossible);
+        ArrayList<String> firstCoup = new ArrayList<>();
+        ArrayList<String> secondCoup = new ArrayList<>();
+        for(String s : copyCoupPossible){
+            if (s.split("-")[0] == bestMove.get(0)){
+                firstCoup.add(s);
+            }
+        }
+        copyCoupPossible.removeAll(firstCoup);
+        res.addAll(firstCoup);
+        for(String s: copyCoupPossible){
+            if(s.split("-")[1] == bestMove.get(1)){
+                secondCoup.add(s);
+            }
+        }
+        copyCoupPossible.removeAll(secondCoup);
+        res.addAll(secondCoup);
+        res.addAll(copyCoupPossible);
+        return res;
+    }
+
+    ArrayList<String> sortBestMove(){
+        ArrayList<String> res = new ArrayList<>();
+        int black = posInit.seeds_black_computer;
+        int red = posInit.seeds_red_computer;
+
+        if (black >= red){
+            res.add("B");
+            res.add("R");
+        }else{
+            res.add("R");
+            res.add("B");
+        }
+        return res;
+    }
+
     int AlphBetaCutSeed(Position pos_current, boolean computer_play,int depth, int depthMax, int a, int b){
         int bestCell = 0;
         Position pos_next;
@@ -84,7 +123,7 @@ public class AlphaBetaCut {
         Position pos_next;
         int maxValue = -10000;
 
-        ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
+        ArrayList<String> coupPossible = sortCoupPossible(coupPossible(pos_current, computer_play), sortBestMove());
 
         for (String coup : coupPossible) {
             pos_next = GameControler.playMove(pos_current, computer_play, coup);
@@ -111,7 +150,7 @@ public class AlphaBetaCut {
 
         int alpha = a;
         int beta = b;
-        ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
+        ArrayList<String> coupPossible = sortCoupPossible(coupPossible(pos_current, computer_play), sortBestMove());
 
         if (computer_play){
             for(String coup: coupPossible){
