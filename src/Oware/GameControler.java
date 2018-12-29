@@ -8,7 +8,6 @@ public class GameControler {
     MinMax minMax;
     AlphaBetaCut alphaBetaCut;
     Position position;
-    private static int depthMAX;
 
     static final String COLOR_RED = "R";
     static final String COLOR_BLACK = "B";
@@ -180,7 +179,7 @@ public class GameControler {
         Hole[] plateau_player_1;
         Hole[] plateau_player_2;
 
-        int nb_captured_red_seeds = 0;
+        int nb_captured_seeds = 0;
         int nb_captured_black_seeds = 0;
         int nb_captured_special_seeds = 0;
         int hole_start;
@@ -226,7 +225,6 @@ public class GameControler {
         int nb_hole = 0;
 
         nb_total_seeds = nb_red_seeds + nb_black_seeds + nb_special_seeds;
-        hole_start = hole+1;
         for(int i =0; i < nb_total_seeds;i++){
             hole_start = hole+nb_hole+1;
             if(special_seed == i){
@@ -239,7 +237,7 @@ public class GameControler {
                     nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color);
                     nb_seeds_1--;
                 }else if(nb_seeds_2 > 0){
-                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color);
+                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color_2);
                     nb_seeds_2--;
                 }
             }
@@ -322,7 +320,7 @@ public class GameControler {
                     }else{
                         switch (color_seed){
                             case COLOR_RED :
-                                nb_captured_red_seeds += nb_captured_seeds.get(0);
+                                nb_captured_seeds += nb_captured_seeds.get(0);
                                 if(special_seeds)
                                     nb_captured_special_seeds += nb_captured_seeds.get(2);
                                 break;
@@ -332,7 +330,7 @@ public class GameControler {
                                     nb_captured_special_seeds += nb_captured_seeds.get(2);
                                 break;
                             case SPECIAL_SEED :
-                                nb_captured_red_seeds += nb_captured_seeds.get(0);
+                                nb_captured_seeds += nb_captured_seeds.get(0);
                                 nb_captured_black_seeds += nb_captured_seeds.get(1);
                                 nb_captured_special_seeds += nb_captured_seeds.get(2);
                                 break;
@@ -349,16 +347,12 @@ public class GameControler {
         if(computer_play){
             pos_next.cells_player = plateau_player_2;
             pos_next.cells_computer = plateau_player_1;
-            pos_next.seeds_red_computer += nb_captured_red_seeds;
-            pos_next.seeds_black_computer += nb_captured_black_seeds;
-            pos_next.captured_special_seed_computer += nb_captured_special_seeds;
+            pos_next.seeds_computer += nb_captured_seeds;
         }
         else{
             pos_next.cells_player = plateau_player_1;
             pos_next.cells_computer = plateau_player_2;
-            pos_next.seeds_red_player += nb_captured_red_seeds;
-            pos_next.seeds_black_player += nb_captured_black_seeds;
-            pos_next.captured_special_seed_player += nb_captured_special_seeds;
+            pos_next.seeds_player += nb_captured_seeds;
 
         }
         return pos_next;
@@ -544,60 +538,15 @@ public class GameControler {
         return "-1";
     }
 
-    public static Seed[] getTabSeeds(Hole[] plateau, int hole, String first_color, int special_seed_hole){
-        int nb_red_seeds;
-        int nb_black_seeds;
-        int nb_special_seeds;
-
-        int nb_seeds_1 = 0;
-        String color_seeds_1 = "";
-
-        int nb_seeds_2 = 0;
-        String color_seeds_2 = "";
-
-        Seed[] tab_seeds;
-
-        nb_red_seeds = plateau[hole].nb_red_seeds;
-        nb_black_seeds = plateau[hole].nb_black_seeds;
-        nb_special_seeds = plateau[hole].nb_special_seeds;
-
-        tab_seeds = new Seed[nb_black_seeds+nb_red_seeds+nb_special_seeds];
-
-        if(first_color.equals(COLOR_RED)){
-            color_seeds_1 = COLOR_RED;
-            nb_seeds_1 = nb_red_seeds;
-            color_seeds_2 = COLOR_BLACK;
-            nb_seeds_2 = nb_black_seeds;
-        }else {
-            color_seeds_1 = COLOR_BLACK;
-            nb_seeds_1 = nb_black_seeds;
-            color_seeds_2 = COLOR_RED;
-            nb_seeds_2 = nb_red_seeds;
-        }
-        int indice = 0;
-        for(int i=0;i<nb_seeds_1;i++){
-            if(special_seed_hole == indice){
-
-            }
-            tab_seeds[i] = new Seed(color_seeds_1);
-            indice = i;
-        }
-        indice++;
-        for(int i=0;i<nb_seeds_2;i++){
-            tab_seeds[indice+i] = new Seed(color_seeds_2);
-        }
-        return tab_seeds;
-    }
-
     public static int evaluation(Position posInit, Position pos){
         int eval = 1;
 
         //                                  SEED
-        int seeds_player = (pos.seeds_red_player + pos.seeds_black_player + pos.captured_special_seed_player);
-        int seeds_playerInit = posInit.seeds_red_player + posInit.seeds_black_player + pos.captured_special_seed_player;
+        int seeds_player = pos.seeds_player;
+        int seeds_playerInit = posInit.seeds_player;
 
-        int seeds_computer = (pos.seeds_red_computer + pos.seeds_black_computer + pos.captured_special_seed_computer);
-        int seeds_computerInit = posInit.seeds_red_computer + posInit.seeds_black_computer + pos.captured_special_seed_computer;
+        int seeds_computer = pos.seeds_computer;
+        int seeds_computerInit = posInit.seeds_computer;
 
 
         //                                  PARTIE EN COUR
@@ -659,8 +608,8 @@ public class GameControler {
     }
 
     public int totalSeeds(int player){
-        int seeds_player = position.seeds_red_player + position.seeds_black_player + position.captured_special_seed_computer;
-        int seeds_computer = position.seeds_red_computer + position.seeds_black_computer + position.captured_special_seed_computer;
+        int seeds_player = position.seeds_player;
+        int seeds_computer = position.seeds_computer;
 
         for (int i = 0; i < position.cells_player.length; i++){
             seeds_player += position.cells_player[i].totalSeeds();

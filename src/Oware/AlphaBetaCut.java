@@ -2,11 +2,8 @@ package Oware;
 
 
 
-import javafx.geometry.Pos;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 
 public class AlphaBetaCut {
@@ -78,8 +75,8 @@ public class AlphaBetaCut {
 
     ArrayList<String> sortBestMove(){
         ArrayList<String> res = new ArrayList<>();
-        int black = posInit.seeds_black_computer;
-        int red = posInit.seeds_red_computer;
+        int black = posInit.seeds_computer;
+        int red = posInit.seeds_computer;
 
         if (black >= red){
             res.add("B");

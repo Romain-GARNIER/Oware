@@ -23,18 +23,18 @@ public class MinMax {
         if (GameControler.finalPosition(pos_current)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
             for (int i = 0; i < pos_current.cells_player.length; i++){
-                pos_current.seeds_red_player += pos_current.cells_player[i].totalSeeds();
+                pos_current.seeds_player += pos_current.cells_player[i].totalSeeds();
             }
 
             for (int i = 0; i < pos_current.cells_computer.length; i++){
-                pos_current.seeds_red_computer += pos_current.cells_computer[i].totalSeeds();
+                pos_current.seeds_computer += pos_current.cells_computer[i].totalSeeds();
             }
 
-            if(pos_current.seeds_red_computer > pos_current.seeds_red_player)
+            if(pos_current.seeds_computer > pos_current.seeds_player)
                 return 96;
-            if(pos_current.seeds_red_computer < pos_current.seeds_red_player)
+            if(pos_current.seeds_computer < pos_current.seeds_player)
                 return -96;
-            if(pos_current.seeds_red_computer == pos_current.seeds_red_player)
+            if(pos_current.seeds_computer == pos_current.seeds_player)
                 return 0;
         }
         if (depth == depthMax) {

@@ -9,7 +9,6 @@ public class main{
         Position pos = new Position();
         pos.init();
         pos.cells_player[0].nb_special_seeds = 1;
-        GameControler.getTabSeeds(pos.cells_player,0,"R",-1);
 
         IHM.level = 1;
 
