@@ -4,18 +4,16 @@ import java.util.*;
 
 public class GameControler {
     boolean computer_player_one;
-    Scanner sc;
     MinMax minMax;
     AlphaBetaCut alphaBetaCut;
     Position position;
+    Player player_1, player_2;
 
     static final String COLOR_RED = "R";
     static final String COLOR_BLACK = "B";
     static final String SPECIAL_SEED = "S";
 
     public GameControler(){
-        sc = new Scanner(System.in);
-
         position = new Position();
         position.init();
         minMax = new MinMax(this, position);
@@ -23,15 +21,20 @@ public class GameControler {
     }
 
     public void definePlayer(){
-        int number = sc.nextInt();
+        int number = IHM.consoleNextInt();
         if(number == 1){
             this.computer_player_one = false;
+            player_1 = new HumanPlayer();
+            player_1 = new HumanPlayer();
         }
-        if(number == 2)
+        if(number == 2){
             this.computer_player_one = true;
+            player_1 = new HumanPlayer();
+            player_2 = new HumanPlayer();
+        }
     }
 
-    public void defineSpecialSeed(boolean computer_play,int hole){
+    public void defineSpecialSeed(boolean computer_play, int hole){
         if(computer_play)
             position.cells_computer[hole].setSpecialSeed(1);
         else
@@ -41,46 +44,18 @@ public class GameControler {
     public void initSpecialSeeds(){
         int hole;
 
-        int depth = 0;
-        int deptTop = 5;
-
-        if (this.computer_player_one){
-            IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
-            hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
-
-            IHM.console("Joueur 1 a choisie : " + (hole+1));
-            defineSpecialSeed(computer_player_one, hole);
-
-
-            IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
-            hole = sc.nextInt();
-            defineSpecialSeed(!computer_player_one, hole-1);
-        }
-        else{
-            IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
-            hole = sc.nextInt();
-            defineSpecialSeed(computer_player_one, hole-1);
-
-
-            IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
-            hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth, deptTop, 0, 96);
-            defineSpecialSeed(!computer_player_one, hole);
-            IHM.console("Joueur 2 a choisie : " + (hole+1));
-        }
         IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
-        hole = sc.nextInt();
+        hole = player_1.chooseStartSpecialSeed(position);
         defineSpecialSeed(computer_player_one, hole-1);
+        IHM.console("Joueur 1 a placé sa graine spéciale dans le trou "+hole);
+
         IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
-        hole = sc.nextInt();
+        hole = player_2.chooseStartSpecialSeed(position);
         defineSpecialSeed(!computer_player_one, hole-1);
-        IHM.console("Joueur 2 a choisie : " + (hole));
+        IHM.console("Joueur 2 a placé sa graine spéciale dans le trou "+hole);
     }
 
     public void startGame(){
-        int a = 0;
-        int b = 96;
-        int depth_start = 0;
-        int depth_max = 7;
         while (!GameControler.finalPosition(position)){
             String move;
             alphaBetaCut.setPosInit(position);
@@ -89,21 +64,8 @@ public class GameControler {
             IHM.console(position.toString(computer_player_one));
             IHM.console("Joueur 1 :");
 
-            if(computer_player_one){
-                move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
-                IHM.console("coup choisi par le bot : "+move);
-            }
-            else{
-                IHM.console("Choisissez un trou entre 1 et 6 :");
-                move = sc.next();
-                if(!validMove(position,false,move)){
-                    while (!validMove(position,false,move)){
-                        IHM.console("Le coup n'est pas valide : ");
-                        IHM.console("Choisissez un trou entre 1 et 6 :");
-                        move = sc.next();
-                    }
-                }
-            }
+            move = player_1.chooseMove(position);
+
             position = GameControler.playMove(position,computer_player_one,move);
 
             IHM.console(position.toString(computer_player_one));
@@ -112,21 +74,7 @@ public class GameControler {
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
 
-                if(!computer_player_one) {
-                    move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,a,b);
-                    IHM.console("coup choisi par le bot : "+(move));
-                }
-                else{
-                    IHM.console("Choisissez un trou entre 7 et 12 :");
-                    move = sc.next();
-                    if(!validMove(position,false,move)){
-                        while (!validMove(position,false,move)){
-                            IHM.console("Le coup n'est pas valide : ");
-                            IHM.console("Choisissez un trou entre 7 et 12 :");
-                            move = sc.next();
-                        }
-                    }
-                }
+                move = player_2.chooseMove(position);
 
                 position = GameControler.playMove(position,!computer_player_one,move);
 
