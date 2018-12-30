@@ -1,4 +1,8 @@
-package Oware;
+package Oware.IA;
+
+import Oware.GameControler;
+import Oware.IHM;
+import Oware.Position;
 
 public class MinMax {
     GameControler gameControler;

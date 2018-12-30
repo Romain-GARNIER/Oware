@@ -1,12 +1,12 @@
 package Oware;
 
-class Position {
+public class Position {
     boolean computer_play; // boolean true if the computer has to play and false otherwise
-    Hole[] cells_computer = new Hole[6];
-    Hole[] cells_player = new Hole[6]; // each cell contains a certain number of seeds
+    public Hole[] cells_computer = new Hole[6];
+    public Hole[] cells_player = new Hole[6]; // each cell contains a certain number of seeds
 
-    int seeds_player; // seeds taken by the player
-    int seeds_computer; // seeds taken by the computer
+    public int seeds_player; // seeds taken by the player
+    public int seeds_computer; // seeds taken by the computer
 
     @Override
     public Position clone(){

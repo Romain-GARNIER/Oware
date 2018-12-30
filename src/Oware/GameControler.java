@@ -1,9 +1,12 @@
 package Oware;
 
+import Oware.IA.AlphaBetaCut;
+import Oware.IA.MinMax;
+
 import java.util.*;
 
 public class GameControler {
-    boolean computer_player_one;
+    public boolean computer_player_one;
     MinMax minMax;
     AlphaBetaCut alphaBetaCut;
     Position position;
