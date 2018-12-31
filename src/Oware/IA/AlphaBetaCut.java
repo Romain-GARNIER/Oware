@@ -1,6 +1,8 @@
-package Oware;
+package Oware.IA;
 
-
+import Oware.GameControler;
+import Oware.IHM;
+import Oware.Position;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,4 +169,6 @@ public class AlphaBetaCut {
             return beta;
         }
     }
+
+
 }

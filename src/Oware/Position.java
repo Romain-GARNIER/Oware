@@ -5,8 +5,8 @@ public class Position {
     Hole[] cells_computer;
     Hole[] cells_player; // each cell contains a certain number of seeds
 
-    int seeds_player; // seeds taken by the player
-    int seeds_computer; // seeds taken by the computer
+    public int seeds_player; // seeds taken by the player
+    public int seeds_computer; // seeds taken by the computer
 
     public Position(){
         cells_computer = new Hole[6];
