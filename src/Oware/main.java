@@ -1,13 +1,11 @@
 package Oware;
 
-import java.util.Scanner;
-
 public class main{
     public static void main (String[] args){
         GameControler gameControler = new GameControler();
 
         Position pos = new Position();
-        pos.init();
+        pos.initDefault();
         pos.cells_player[0].nb_special_seeds = 1;
 
         IHM.level = 1;

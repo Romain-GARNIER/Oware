@@ -1,12 +1,57 @@
 package Oware;
 
-class Position {
+public class Position {
     boolean computer_play; // boolean true if the computer has to play and false otherwise
-    Hole[] cells_computer = new Hole[6];
-    Hole[] cells_player = new Hole[6]; // each cell contains a certain number of seeds
+    Hole[] cells_computer;
+    Hole[] cells_player; // each cell contains a certain number of seeds
 
     int seeds_player; // seeds taken by the player
     int seeds_computer; // seeds taken by the computer
+
+    public Position(){
+        cells_computer = new Hole[6];
+        cells_player = new Hole[6];
+        seeds_player = 0;
+        seeds_computer = 0;
+        computer_play = true;
+    }
+
+    public int getSeeds_computer() {
+        return seeds_computer;
+    }
+
+    public int getSeeds_player() {
+        return seeds_player;
+    }
+
+    public Hole[] getCells_computer() {
+        return cells_computer;
+    }
+
+    public Hole[] getCells_player() {
+        return cells_player;
+    }
+
+    public void initDefault(){
+        for(int i=0;i<6;i++){
+            cells_player[i] = new Hole(3,3,0);
+            cells_computer[i] = new Hole(3,3,0);
+        }
+    }
+
+    public void init(int n){
+        for(int i=0;i<6;i++){
+            cells_player[i] = new Hole(n,n,0);
+            cells_computer[i] = new Hole(n,n,0);
+        }
+    }
+
+    public void defineSpecialSeed(boolean computer_play, int hole){
+        if(computer_play)
+            cells_computer[hole].setSpecialSeed(1);
+        else
+            cells_player[hole].setSpecialSeed(1);
+    }
 
     @Override
     public Position clone(){
@@ -23,13 +68,6 @@ class Position {
         pos.seeds_computer = seeds_computer;
 
         return pos;
-    }
-
-    public void init(){
-        for(int i=0;i<6;i++){
-            cells_player[i] = new Hole(2,2,0);
-            cells_computer[i] = new Hole(2,2,0);
-        }
     }
 
     public String toString(boolean computer_player_one){

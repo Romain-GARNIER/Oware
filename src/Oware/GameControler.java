@@ -9,13 +9,13 @@ public class GameControler {
     Position position;
     Player player_1, player_2;
 
-    static final String COLOR_RED = "R";
-    static final String COLOR_BLACK = "B";
-    static final String SPECIAL_SEED = "S";
+    public static final String COLOR_RED = "R";
+    public static final String COLOR_BLACK = "B";
+    public static final String SPECIAL_SEED = "S";
 
     public GameControler(){
         position = new Position();
-        position.init();
+        position.initDefault();
         minMax = new MinMax(this, position);
         alphaBetaCut = new AlphaBetaCut(this, position);
     }
@@ -34,24 +34,17 @@ public class GameControler {
         }
     }
 
-    public void defineSpecialSeed(boolean computer_play, int hole){
-        if(computer_play)
-            position.cells_computer[hole].setSpecialSeed(1);
-        else
-            position.cells_player[hole].setSpecialSeed(1);
-    }
-
     public void initSpecialSeeds(){
         int hole;
 
         IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
         hole = player_1.chooseStartSpecialSeed(position);
-        defineSpecialSeed(computer_player_one, hole-1);
+        position.defineSpecialSeed(computer_player_one, hole-1);
         IHM.console("Joueur 1 a placé sa graine spéciale dans le trou "+hole);
 
         IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
         hole = player_2.chooseStartSpecialSeed(position);
-        defineSpecialSeed(!computer_player_one, hole-1);
+        position.defineSpecialSeed(!computer_player_one, hole-1);
         IHM.console("Joueur 2 a placé sa graine spéciale dans le trou "+hole);
     }
 
@@ -86,18 +79,27 @@ public class GameControler {
     public static boolean validMove(Position pos, boolean computer_play, String move){
         String[] tabMove;
         int hole, special_seed;
+        int indexHole;
         String color;
         Hole[] tableau;
         int nb_seeds_color = -1;
         int nb_seeds_special = -1;
+        int nb_total_seeds;
+
+        if(!move.contains("-"))
+            return false;
 
         tabMove = move.split("-");
-        hole = (Integer.parseInt(tabMove[0])-1)%6;
+        hole = Integer.parseInt(tabMove[0]);
+        if(hole < 1 || hole > 12)
+            return false;
+
+        indexHole = (hole-1)%6;
         color = tabMove[1];
         special_seed = -1;
 
         if(tabMove.length == 3)
-            special_seed = Integer.parseInt(tabMove[0]);
+            special_seed = Integer.parseInt(tabMove[2]);
 
         if(computer_play){
             tableau = pos.cells_computer.clone();
@@ -105,15 +107,13 @@ public class GameControler {
         else{
             tableau = pos.cells_player.clone();
         }
-        nb_seeds_color = tableau[hole].getNbSeeds(color);
+        nb_seeds_color = tableau[indexHole].getNbSeeds(color);
+        nb_seeds_special = tableau[indexHole].getNbSeeds(SPECIAL_SEED);
+        nb_total_seeds = tableau[indexHole].totalSeeds();
         if(special_seed != -1){
-            nb_seeds_special = tableau[hole].getNbSeeds(SPECIAL_SEED);
-            if(nb_seeds_special > 1)
-                return nb_seeds_color > 0 && nb_seeds_special > 0;
-            else
-                return nb_seeds_special > 0;
+            return nb_seeds_color > 0 && nb_seeds_special > 0 && special_seed <= nb_total_seeds;
         }
-        return nb_seeds_color > 0;
+        return nb_seeds_color > 0 && nb_seeds_special == 0;
     }
 
     // Joue le coup avec une prise simple sans s'occuper de la continuité
@@ -171,21 +171,22 @@ public class GameControler {
         }
 
         int nb_hole = 0;
-
+        plateau_player_1[hole].setAllSeeds(0);
         nb_total_seeds = nb_red_seeds + nb_black_seeds + nb_special_seeds;
+        hole_start = hole + 1;
         for(int i =0; i < nb_total_seeds;i++){
-            hole_start = hole+nb_hole+1;
-            if(special_seed == i){
+            hole_start += nb_hole;
+            if(special_seed == i || (nb_special_seeds == 2 && nb_special_seeds == i+1)){
                 if(nb_special_seeds > 0){
-                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,SPECIAL_SEED);
+                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_start, hole, enemy_side,lasts_hole,SPECIAL_SEED);
                     nb_special_seeds--;
                 }
             }else{
                 if(nb_seeds_1 > 0){
-                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color);
+                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_start, hole, enemy_side,lasts_hole,color);
                     nb_seeds_1--;
                 }else if(nb_seeds_2 > 0){
-                    nb_hole = sowHole(plateau_player_1, plateau_player_2, hole_start,enemy_side,lasts_hole,color_2);
+                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_start, hole, enemy_side,lasts_hole,color_2);
                     nb_seeds_2--;
                 }
             }
@@ -373,18 +374,16 @@ public class GameControler {
         return nb_hole;
     }
 
-    public static int sowHole(Hole[] plateau_1, Hole[] plateau_2, int hole, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color){
+    public static int addSeed(Hole[] plateau_1, Hole[] plateau_2, int hole, int hole_start, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color){
         int position;
         int last_hole = -1;
-        int nb_hole = -1;
+        int nb_hole = 0;
         int enemy_indice;
-
-        plateau_1[hole].setAllSeeds(0);
 
         enemy_side_list.add(false);
         enemy_indice = enemy_side_list.size()-1;
 
-        position = hole;
+        position = hole_start;
 
         // position du trou sur un camp (varie entre 1 et 6)
         int holePosition = position%6;
@@ -395,7 +394,6 @@ public class GameControler {
         if(tmp == 0){
             // si on revient sur la position de départ, on ne met pas de graine dedans
             if(holePosition == hole) {
-                position++;
                 nb_hole++;
                 if (holePosition == 5) { //Mod pour cas holepositon = 6;
                     holePosition = 0;
