@@ -1,9 +1,11 @@
 package Oware;
 
+import java.util.Arrays;
+
 public class Position {
-    boolean computer_play; // boolean true if the computer has to play and false otherwise
-    Hole[] cells_computer;
-    Hole[] cells_player; // each cell contains a certain number of seeds
+    public boolean computer_play; // boolean true if the computer has to play and false otherwise
+    public Hole[] cells_computer;
+    public Hole[] cells_player; // each cell contains a certain number of seeds
 
     public int seeds_player; // seeds taken by the player
     public int seeds_computer; // seeds taken by the computer
@@ -53,23 +55,6 @@ public class Position {
             cells_player[hole].setSpecialSeed(1);
     }
 
-    @Override
-    public Position clone(){
-        Position pos = new Position();
-
-        pos.computer_play = computer_play;
-
-        for(int i = 0; i < cells_player.length; i++){
-            pos.cells_player[i] = cells_player[i].clone();
-            pos.cells_computer[i] = cells_computer[i].clone();
-        }
-
-        pos.seeds_player = seeds_player;
-        pos.seeds_computer = seeds_computer;
-
-        return pos;
-    }
-
     public String toString(boolean computer_player_one){
         String res ="";
         String res1 = "";
@@ -105,5 +90,45 @@ public class Position {
         res2+="| capturee :" + nbCaptured_player_2 + "\n";
 
         return res1+res2;
+    }
+    @Override
+    public Position clone(){
+        Position pos = new Position();
+
+        pos.computer_play = computer_play;
+
+        for(int i = 0; i < cells_player.length; i++){
+            pos.cells_player[i] = cells_player[i].clone();
+            pos.cells_computer[i] = cells_computer[i].clone();
+        }
+
+        pos.seeds_player = seeds_player;
+        pos.seeds_computer = seeds_computer;
+
+        return pos;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        hash = hash*13+seeds_player;
+        hash = hash*17+seeds_computer;
+        hash = hash*(computer_play ? 5 : 7);
+        hash = hash*12 + Arrays.hashCode(cells_player);
+        hash = hash*3 + Arrays.hashCode(cells_computer);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (this.getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return seeds_player == position.getSeeds_player()
+                && seeds_computer == position.getSeeds_computer()
+                && computer_play == position.computer_play
+                && Arrays.equals(cells_player,position.cells_player)
+                && Arrays.equals(cells_computer,position.cells_computer);
     }
 }

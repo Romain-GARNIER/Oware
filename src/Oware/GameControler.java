@@ -28,11 +28,11 @@ public class GameControler {
         if(number == 1){
             this.computer_player_one = false;
             player_1 = new HumanPlayer();
-            player_1 = new HumanPlayer();
+            player_2 = new ComputerPlayer(position, this);
         }
         if(number == 2){
             this.computer_player_one = true;
-            player_1 = new HumanPlayer();
+            player_1 = new ComputerPlayer(position, this);
             player_2 = new HumanPlayer();
         }
     }
@@ -122,7 +122,7 @@ public class GameControler {
     // Joue le coup avec une prise simple sans s'occuper de la continuité
     public static Position playMove(Position pos_current,boolean computer_play, String move){
         String[] tabMove;
-        int hole, special_seed;
+        int hole_to_sow, special_seed;
         int last_hole = -1;
         String color, color_2;
 
@@ -134,11 +134,12 @@ public class GameControler {
         int nb_captured_black_seeds = 0;
         int nb_captured_special_seeds = 0;
         int hole_start;
+
         ArrayList<Boolean> enemy_side = new ArrayList<>();
         ArrayList<Integer> lasts_hole = new ArrayList<>();
 
         tabMove = move.split("-");
-        hole = (Integer.parseInt(tabMove[0])-1)%6;
+        hole_to_sow = (Integer.parseInt(tabMove[0])-1)%6;
         color = tabMove[1];
         special_seed = -1;
 
@@ -154,147 +155,30 @@ public class GameControler {
             plateau_player_2 = pos_next.cells_computer;
         }
 
-        int nb_total_seeds;
-        int nb_red_seeds = plateau_player_1[hole].getNbSeeds(COLOR_RED);
-        int nb_black_seeds = plateau_player_1[hole].getNbSeeds(COLOR_BLACK);
-        int nb_special_seeds = plateau_player_1[hole].getNbSeeds(SPECIAL_SEED);
+        int nb_red_seeds = plateau_player_1[hole_to_sow].getNbSeeds(COLOR_RED);
+        int nb_black_seeds = plateau_player_1[hole_to_sow].getNbSeeds(COLOR_BLACK);
+        int nb_special_seeds = plateau_player_1[hole_to_sow].getNbSeeds(SPECIAL_SEED);
 
-        int nb_seeds_1;
-        int nb_seeds_2;
+        sow(plateau_player_1, plateau_player_2, hole_to_sow, enemy_side, lasts_hole, color, special_seed);
 
-        if(color.equals(COLOR_RED)){
-            nb_seeds_1 = nb_red_seeds;
-            nb_seeds_2 = nb_black_seeds;
-            color_2 = COLOR_BLACK;
-        }
-        else {
-            nb_seeds_1 = nb_black_seeds;
-            nb_seeds_2 = nb_red_seeds;
-            color_2 = COLOR_RED;
-        }
+        if(enemy_side.get(enemy_side.size()-1)){
+            String color_for_capture;
 
-        int nb_hole = 0;
-        plateau_player_1[hole].setAllSeeds(0);
-        nb_total_seeds = nb_red_seeds + nb_black_seeds + nb_special_seeds;
-        hole_start = hole + 1;
-        for(int i =0; i < nb_total_seeds;i++){
-            hole_start += nb_hole;
-            if(special_seed == i || (nb_special_seeds == 2 && nb_special_seeds == i+1)){
-                if(nb_special_seeds > 0){
-                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_start, hole, enemy_side,lasts_hole,SPECIAL_SEED);
-                    nb_special_seeds--;
-                }
+            if(color.equals(COLOR_RED)){
+                color_2 = COLOR_BLACK;
+            }
+            else {
+                color_2 = COLOR_RED;
+            }
+
+            if(special_seed == nb_red_seeds+nb_black_seeds){
+                color_for_capture = GameControler.SPECIAL_SEED;
             }else{
-                if(nb_seeds_1 > 0){
-                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_start, hole, enemy_side,lasts_hole,color);
-                    nb_seeds_1--;
-                }else if(nb_seeds_2 > 0){
-                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_start, hole, enemy_side,lasts_hole,color_2);
-                    nb_seeds_2--;
-                }
+                color_for_capture = color_2;
             }
-        }
-/*
-        boolean stop = false;
-        int i = ordre.length-1;
-        String color_seed = "";
-        boolean enemy = enemy_side.get(i);
-        boolean red_seeds = false;
-        boolean black_seeds = false;
-        boolean special_seeds = false;
-        while (!stop && i>=0 && enemy){
-            if(color_seed == ""){
-                color_seed = ordre[i];
-                if(color_seed.equals(SPECIAL_SEED))
-                    special_seeds = true;
-            }else{
-                if(color_seed.equals(SPECIAL_SEED)){
-                    switch (ordre[i]){
-                        case COLOR_RED :
-                            red_seeds = true;
-                            black_seeds = false;
-                            special_seeds = false;
-                            break;
-                        case COLOR_BLACK :
-                            red_seeds = true;
-                            black_seeds = false;
-                            special_seeds = false;
-                            break;
-                    }
 
-                    //if(color_seed.equals(SPECIAL_SEED))
-                    //    special_seeds = true;
-                    //else
-                    //    special_seeds = false;
-
-                }
-                else {
-                    if(!ordre[i].equals(SPECIAL_SEED)){
-                        stop = true;
-                    }else{
-                        red_seeds = false;
-                        black_seeds = false;
-                        special_seeds = true;
-                    }
-                }
-            }
-            if(!stop){
-                int nb_seeds = 0;
-                boolean capture_red = false;
-                boolean capture_black = false;
-                switch (color_seed){
-                    case COLOR_RED :
-                        nb_seeds = nb_red_seeds;
-                        capture_red = true;
-                        break;
-                    case COLOR_BLACK :
-                        nb_seeds = nb_black_seeds;
-                        capture_black = true;
-                        break;
-                    case SPECIAL_SEED :
-                        nb_seeds = nb_special_seeds;
-                        capture_red = true;
-                        capture_black = true;
-                        break;
-                }
-                if(red_seeds)
-                    nb_seeds = nb_red_seeds;
-                if(black_seeds)
-                    nb_seeds = nb_black_seeds;
-                if(special_seeds)
-                    nb_seeds = nb_special_seeds;
-                int j = lasts_hole.get(i);
-                ArrayList<Integer> nb_captured_seeds = new ArrayList<>();
-                while (j >= 0 && nb_seeds > 0 && !stop){
-                    color_seed = collect_seeds(plateau_player_2,capture_red,capture_black,j, nb_captured_seeds,special_seeds);
-                    if( color_seed.equals("-1") ){
-                        stop = true;
-                    }else{
-                        switch (color_seed){
-                            case COLOR_RED :
-                                nb_captured_seeds += nb_captured_seeds.get(0);
-                                if(special_seeds)
-                                    nb_captured_special_seeds += nb_captured_seeds.get(2);
-                                break;
-                            case COLOR_BLACK :
-                                nb_captured_black_seeds += nb_captured_seeds.get(1);
-                                if(special_seeds)
-                                    nb_captured_special_seeds += nb_captured_seeds.get(2);
-                                break;
-                            case SPECIAL_SEED :
-                                nb_captured_seeds += nb_captured_seeds.get(0);
-                                nb_captured_black_seeds += nb_captured_seeds.get(1);
-                                nb_captured_special_seeds += nb_captured_seeds.get(2);
-                                break;
-                        }
-                        nb_seeds--;
-                        j--;
-                    }
-                }
-                i--;
-            }
+            nb_captured_seeds = capture_seeds(plateau_player_2, lasts_hole.get(lasts_hole.size()-1),color_for_capture);
         }
-        */
 
         if(computer_play){
             pos_next.cells_player = plateau_player_2;
@@ -305,7 +189,6 @@ public class GameControler {
             pos_next.cells_player = plateau_player_1;
             pos_next.cells_computer = plateau_player_2;
             pos_next.seeds_player += nb_captured_seeds;
-
         }
         return pos_next;
     }
@@ -321,63 +204,52 @@ public class GameControler {
         return sum1 == 0 || sum2 == 0;
     }
 
-    public static int sow(Hole[] plateau_1, Hole[] plateau_2, int nb_seed, int hole_start, int hole, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color, int special_seed){
-        int position;
-        int last_hole = -1;
-        int nb_hole = -1;
-        int enemy_indice;
-        boolean enemy_side = false;
-        if(!enemy_side_list.isEmpty())
-            enemy_side = enemy_side_list.get(enemy_side_list.size()-1);
+    public static void sow(Hole[] plateau_player_1, Hole[] plateau_player_2, int hole_to_sow, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color, int special_seed){
+        String color_2;
+        int nb_total_seeds;
+        int nb_red_seeds = plateau_player_1[hole_to_sow].getNbSeeds(COLOR_RED);
+        int nb_black_seeds = plateau_player_1[hole_to_sow].getNbSeeds(COLOR_BLACK);
+        int nb_special_seeds = plateau_player_1[hole_to_sow].getNbSeeds(SPECIAL_SEED);
 
-        plateau_1[hole].setAllSeeds(0);
+        int nb_seeds_1;
+        int nb_seeds_2;
 
-        enemy_side_list.add(false);
-        enemy_indice = enemy_side_list.size()-1;
-/*
-        if(hole_start == 6 && enemy_side){
-            hole_start = 0;
+        int hole;
+        int nb_hole = 0;
+
+        if(color.equals(COLOR_RED)){
+            nb_seeds_1 = nb_red_seeds;
+            nb_seeds_2 = nb_black_seeds;
+            color_2 = COLOR_BLACK;
         }
-*/
-        for(int i=0;i<nb_seed;i++){
-            position = hole_start + i;
-            // position du trou sur un camp (varie entre 1 et 6)
-            int holePosition = position%6;
-            // renvoi vrai si le reste de la division est paire (pour choisir le camp)
-            int tmp = (position/6)%2;
-
-            boolean tmpBool = true;
-            if(tmp == 0){
-                // si on revient sur la position de départ, on ne met pas de graine dedans
-                if(holePosition == hole) {
-                    hole_start++;
-                    position++;
-                    nb_hole++;
-                    if (holePosition == 5) { //Mod pour cas holepositon = 6;
-                        holePosition = 0;
-                        plateau_2[holePosition].addSeeds(1,color);
-                        tmpBool = false;
-                    } else {
-                        holePosition++;
-                    }
-                }
-                if(tmpBool){
-                    plateau_1[holePosition].addSeeds(1,color);
-                }
-                Collections.replaceAll(enemy_side_list,true,false);
-            }
-            else{
-                plateau_2[holePosition].addSeeds(1,color);
-                enemy_side_list.set(enemy_indice,true);
-            }
-            last_hole = holePosition;
-            nb_hole++;
+        else {
+            nb_seeds_1 = nb_black_seeds;
+            nb_seeds_2 = nb_red_seeds;
+            color_2 = COLOR_RED;
         }
-        lasts_hole.add(last_hole);
-        return nb_hole;
+
+        plateau_player_1[hole_to_sow].setAllSeeds(0);
+        nb_total_seeds = nb_red_seeds + nb_black_seeds + nb_special_seeds;
+        hole = hole_to_sow + 1;
+        for(int i =0; i < nb_total_seeds;i++){
+            hole += nb_hole;
+            if(special_seed == i || (nb_special_seeds == 2 && special_seed == i-1)){
+                if(nb_special_seeds > -1){
+                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_to_sow, hole, enemy_side_list, lasts_hole,SPECIAL_SEED);
+                }
+            }else{
+                if(nb_seeds_1 > 0){
+                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_to_sow, hole, enemy_side_list, lasts_hole, color);
+                    nb_seeds_1--;
+                }else if(nb_seeds_2 > 0){
+                    nb_hole = addSeed(plateau_player_1, plateau_player_2, hole_to_sow, hole, enemy_side_list, lasts_hole, color_2);
+                    nb_seeds_2--;
+                }
+            }
+        }
     }
 
-    public static int addSeed(Hole[] plateau_1, Hole[] plateau_2, int hole, int hole_start, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color){
+    public static int addSeed(Hole[] plateau_1, Hole[] plateau_2, int hole_to_sow, int hole, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color){
         int position;
         int last_hole = -1;
         int nb_hole = 0;
@@ -386,7 +258,7 @@ public class GameControler {
         enemy_side_list.add(false);
         enemy_indice = enemy_side_list.size()-1;
 
-        position = hole_start;
+        position = hole;
 
         // position du trou sur un camp (varie entre 1 et 6)
         int holePosition = position%6;
@@ -396,20 +268,21 @@ public class GameControler {
         boolean tmpBool = true;
         if(tmp == 0){
             // si on revient sur la position de départ, on ne met pas de graine dedans
-            if(holePosition == hole) {
+            if(holePosition == hole_to_sow) {
                 nb_hole++;
                 if (holePosition == 5) { //Mod pour cas holepositon = 6;
                     holePosition = 0;
                     plateau_2[holePosition].addSeeds(1,color);
                     tmpBool = false;
+                    enemy_side_list.set(enemy_indice,true);
                 } else {
                     holePosition++;
                 }
             }
             if(tmpBool){
                 plateau_1[holePosition].addSeeds(1,color);
+                Collections.replaceAll(enemy_side_list,true,false);
             }
-            Collections.replaceAll(enemy_side_list,true,false);
         }
         else{
             plateau_2[holePosition].addSeeds(1,color);
@@ -419,6 +292,83 @@ public class GameControler {
         nb_hole++;
         lasts_hole.add(last_hole);
         return nb_hole;
+    }
+
+    public static int capture_seeds(Hole[] board, int hole_index, String color){
+        int index, nb_captured_total_seeds;
+        boolean stop = false;
+        String color_to_capture[] = {color};
+
+        nb_captured_total_seeds = 0;
+        index = hole_index;
+
+        while (index >= 0  && !stop){
+            Hole hole = board[index].clone();
+            int nb_captured_seeds = collect_seeds(hole, color_to_capture);
+            if(nb_captured_seeds > 0){
+                board[index] = hole;
+                nb_captured_total_seeds += nb_captured_seeds;
+            }else{
+                stop = true;
+            }
+            index--;
+        }
+        return nb_captured_total_seeds;
+    }
+
+    public static int collect_seeds(Hole hole, String[] color_for_capture){
+        int nb_seeds, nb_special_seeds;
+        String color;
+
+        color = color_for_capture[0];
+
+        nb_seeds = hole.getNbSeeds(color);
+        nb_special_seeds = hole.getNbSeeds(GameControler.SPECIAL_SEED);
+
+        if(color.equals(GameControler.SPECIAL_SEED)){
+            int total_seeds = 0;
+            int nb_red_seeds = hole.getNbSeeds(GameControler.COLOR_RED);
+            int nb_black_seeds = hole.getNbSeeds(GameControler.COLOR_BLACK);
+            boolean red_color, black_color;
+
+            red_color = false;
+            black_color = false;
+
+            if(nb_red_seeds+nb_special_seeds >= 2 && nb_red_seeds+nb_special_seeds <= 3){
+                hole.setNbSeeds(GameControler.COLOR_RED,0);
+                red_color = true;
+                total_seeds += nb_red_seeds;
+            }
+            if(nb_black_seeds+nb_special_seeds >= 2 && nb_black_seeds+nb_special_seeds <= 3){
+                hole.setNbSeeds(GameControler.COLOR_BLACK,0);
+                black_color = true;
+                total_seeds += nb_black_seeds;
+            }
+            if(red_color != black_color){
+                if(red_color)
+                    color_for_capture[0] = GameControler.COLOR_RED;
+                else
+                    color_for_capture[0] = GameControler.COLOR_BLACK;
+            }
+            if(!red_color && !black_color)
+                return 0;
+            hole.setNbSeeds(GameControler.SPECIAL_SEED,0);
+            return total_seeds+nb_special_seeds;
+        }else {
+            if(nb_special_seeds == 0){
+                if(nb_seeds >= 2 && nb_seeds <= 3){
+                    hole.setNbSeeds(color,0);
+                    return nb_seeds;
+                }
+            }else{
+                if(nb_seeds+nb_special_seeds >= 2 && nb_seeds+nb_special_seeds <= 3){
+                    hole.setNbSeeds(color,0);
+                    hole.setNbSeeds(SPECIAL_SEED,0);
+                    return nb_seeds+nb_special_seeds;
+                }
+            }
+        }
+        return 0;
     }
 
     public static String collect_seeds(Hole[] plateau, boolean red_seeds, boolean black_seeds, int hole, ArrayList<Integer> nb_seeds, boolean special_seeds) {

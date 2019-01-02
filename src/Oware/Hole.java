@@ -67,10 +67,13 @@ public class Hole
         switch (color){
             case GameControler.COLOR_RED :
                 nb_red_seeds = nb_seeds;
+                break;
             case GameControler.COLOR_BLACK :
-                nb_black_seeds = nb_seeds;;
+                nb_black_seeds = nb_seeds;
+                break;
             case GameControler.SPECIAL_SEED :
                 nb_special_seeds = nb_seeds;
+                break;
         }
     }
 

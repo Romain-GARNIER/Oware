@@ -90,7 +90,7 @@ public class AlphaBetaCut {
         return res;
     }
 
-    int AlphBetaCutSeed(Position pos_current, boolean computer_play,int depth, int depthMax, int a, int b){
+    public int AlphBetaCutSeed(Position pos_current, boolean computer_play,int depth, int depthMax, int a, int b){
         int bestCell = 0;
         Position pos_next;
         int maxValue = -10000;
@@ -117,7 +117,7 @@ public class AlphaBetaCut {
         return bestCell;
     }
 
-    String AlphaBetaCutStart(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b) {
+    public String AlphaBetaCutStart(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b) {
         String bestCoup = "";
         Position pos_next;
         int maxValue = -10000;
