@@ -140,7 +140,12 @@ public class AlphaBetaCut {
     int AlphaBetaCutValue(Position pos_current, boolean computer_play, int depth, int depthMax, int a, int b){
         Position pos_next; // In C : created on the stack: = very fast
 
-        if (depth == depthMax || GameControler.finalPosition(pos_current)) {
+        if(GameControler.finalPosition(pos_current, computer_play)){
+            int evaluation = GameControler.finalEvaluation(pos_current);
+            IHM.log("evaluation : "+evaluation+"\n",3);
+            return evaluation;
+        }
+        if (depth == depthMax) {
             int evaluation = GameControler.evaluation(posInit,pos_current);
             IHM.log("evaluation : "+evaluation+"\n",3);
             return evaluation;

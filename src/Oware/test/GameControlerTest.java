@@ -395,6 +395,24 @@ public class GameControlerTest {
 
     @Test
     void finalPosition() {
+        Position pos;
+        boolean computer_play;
+
+        pos = new Position();
+        computer_play = true;
+
+        pos.init(0);
+
+        pos.cells_player[0] = new Hole(1,1,1);
+
+        Assert.assertTrue(GameControler.finalPosition(pos, computer_play));
+        Assert.assertFalse(GameControler.finalPosition(pos, !computer_play));
+
+        pos.cells_player[0] = new Hole(0,0,0);
+        pos.cells_computer[0] = new Hole(1,1,1);
+
+        Assert.assertTrue(GameControler.finalPosition(pos, !computer_play));
+        Assert.assertFalse(GameControler.finalPosition(pos, computer_play));
     }
 
     @Test
@@ -1438,6 +1456,11 @@ public class GameControlerTest {
 
     @Test
     void evaluation() {
+    }
+
+    @Test
+    void finalEvaluation(){
+
     }
 
     @Test

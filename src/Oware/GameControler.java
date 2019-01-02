@@ -52,7 +52,7 @@ public class GameControler {
     }
 
     public void startGame(){
-        while (!GameControler.finalPosition(position)){
+        while (!GameControler.finalPosition(position, computer_player_one)){
             String move;
             alphaBetaCut.setPosInit(position);
 
@@ -66,7 +66,7 @@ public class GameControler {
 
             IHM.console(position.toString(computer_player_one));
 
-            if(!GameControler.finalPosition(position)){
+            if(!GameControler.finalPosition(position, !computer_player_one)){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
 
@@ -193,7 +193,7 @@ public class GameControler {
         return pos_next;
     }
 
-    public static boolean finalPosition(Position pos){
+    public static boolean finalPosition(Position pos, boolean computer_play){
         int sum1, sum2;
         sum1 = 0;
         sum2 = 0;
@@ -201,7 +201,7 @@ public class GameControler {
             sum1 += pos.cells_computer[i].totalSeeds();
             sum2 += pos.cells_player[i].totalSeeds();
         }
-        return sum1 == 0 || sum2 == 0;
+        return (computer_play && sum1 == 0) || (!computer_play && sum2 == 0);
     }
 
     public static void sow(Hole[] plateau_player_1, Hole[] plateau_player_2, int hole_to_sow, ArrayList<Boolean> enemy_side_list, ArrayList<Integer> lasts_hole, String color, int special_seed){
@@ -438,7 +438,7 @@ public class GameControler {
     }
 
     public static int evaluation(Position posInit, Position pos){
-        int eval = 1;
+        int eval = 0;
 
         //                                  SEED
         int seeds_player = pos.seeds_player;
@@ -446,7 +446,6 @@ public class GameControler {
 
         int seeds_computer = pos.seeds_computer;
         int seeds_computerInit = posInit.seeds_computer;
-
 
         //                                  PARTIE EN COUR
 
@@ -478,20 +477,34 @@ public class GameControler {
             eval += (cell_computer - cell_player);
         }
 
-        //                                     FIN
-        int sum1, sum2;
-        sum1 = 0;
-        sum2 = 0;
-        for(int i=0;i<6;i++){
-            sum1 += pos.cells_computer[i].totalSeeds();
-            sum2 += pos.cells_player[i].totalSeeds();
+        return eval;
+    }
+
+    public static int finalEvaluation(Position pos){
+        int eval = 0;
+
+        //                                  SEED
+        int seeds_player = pos.seeds_player;
+
+        int seeds_computer = pos.seeds_computer;
+
+        //      PLAYER
+        int cell_player = 0;
+        for(int i =0; i<pos.cells_player.length; i++){
+            cell_player += pos.cells_player[i].totalSeeds();
+        }
+        //      COMPUTER
+        int cell_computer = 0;
+        for(int i = 0; i<pos.cells_computer.length; i++){
+            cell_computer += pos.cells_computer[i].totalSeeds();
         }
 
-        if(sum1 == 0){
+        if(cell_player+seeds_player > cell_computer+seeds_computer)
             eval = -96;
-        }else if (sum2 == 0){
+        if(cell_player+seeds_player < cell_computer+seeds_computer)
             eval = 96;
-        }
+        if(cell_player+seeds_player == cell_computer+seeds_computer)
+            eval = 0;
 
         return eval;
     }

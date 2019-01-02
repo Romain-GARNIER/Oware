@@ -1,6 +1,7 @@
 package Oware.IA;
 
 import Oware.GameControler;
+import Oware.IHM;
 import Oware.Position;
 
 import java.sql.Array;
@@ -67,7 +68,13 @@ public class PVS extends IAEngine{
         double score;
         double a = alpha;
         double b = beta;
-        if (depth == depthMax || gc.finalPosition(pos_current)){
+
+        if(GameControler.finalPosition(pos_current, computer_play)){
+            int evaluation = GameControler.finalEvaluation(pos_current);
+            IHM.log("evaluation : "+evaluation+"\n",3);
+            return evaluation;
+        }
+        if (depth == depthMax){
             return gc.evaluation(posInit, pos_current);
         }
         ArrayList<String> coups = coupPossible(pos_current, computer_play);

@@ -24,7 +24,7 @@ public class MinMax {
         int[] tab_values_red = new int[6];
         int[] tab_values_black = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast
-        if (GameControler.finalPosition(pos_current)){
+        if (GameControler.finalPosition(pos_current, computer_play)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
             for (int i = 0; i < pos_current.cells_player.length; i++){
                 pos_current.seeds_player += pos_current.cells_player[i].totalSeeds();
