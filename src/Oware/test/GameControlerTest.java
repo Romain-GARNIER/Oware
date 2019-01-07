@@ -85,6 +85,17 @@ public class GameControlerTest {
 
         //endregion
 
+        //region coup avec graine spéciale
+        move = "1-R-1";
+
+        position_to_test.cells_player_1[0] = new Hole(0,0,1);
+        position_to_test.cells_player_2[0] = new Hole(0,1,1);
+
+        Assert.assertTrue(GameControler.validMove(position_to_test, true, move));
+        Assert.assertTrue(GameControler.validMove(position_to_test, false, move));
+
+        //endregion
+
         //region Trou impossible
 
         move = "13-R-1";
@@ -110,17 +121,29 @@ public class GameControlerTest {
         Assert.assertFalse(GameControler.validMove(position_to_test, true, move));
 
         //endregion
+
+        //region coup invalide, trou vide
+        move = "1-R";
+
+        position_to_test.cells_player_1[0] = new Hole(0,0,0);
+        position_to_test.cells_player_2[0] = new Hole(1,0,0);
+
+        Assert.assertFalse(GameControler.validMove(position_to_test, true, move));
+        Assert.assertTrue(GameControler.validMove(position_to_test, false, move));
+
+        //endregion
+
     }
 
     @Test
     void playMove() {
         Position position_to_verify;
-        boolean computer_play;
+        boolean player_one;
         String move;
         int nbSeeds;
 
         position_to_verify = new Position();
-        computer_play = true;
+        player_one = true;
 
         //region sans graine spéciale
 
@@ -131,20 +154,22 @@ public class GameControlerTest {
         position_to_test.init(nbSeeds);
         move = "1-R";
 
-        position_to_verify.cells_computer[0] = new Hole(0,0,0);
-        position_to_verify.cells_computer[1] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[2] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[3] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[0] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_1[0] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[1] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[2] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[3] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[0] = new Hole(nbSeeds,nbSeeds+1,0);
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
+
+
         //endregion
 
         //region tests avec captures
@@ -157,22 +182,52 @@ public class GameControlerTest {
 
         move = "3-R";
 
-        position_to_verify.cells_computer[0] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[1] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[2] = new Hole(0,0,0);
-        position_to_verify.cells_computer[3] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[0] = new Hole(nbSeeds,0,0);
+        position_to_verify.cells_player_1[0] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[1] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[2] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[3] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[0] = new Hole(nbSeeds,0,0);
 
-        position_to_verify.seeds_computer = nbSeeds+1;
+        position_to_verify.seeds_player_1 = nbSeeds+1;
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
+
+        //endregion
+
+        //region coup avec capture simple en début de plateau
+
+        nbSeeds = 0;
+        position_to_verify.init(nbSeeds);
+        position_to_test.init(nbSeeds);
+
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
+
+        position_to_test.cells_player_1[5] = new Hole(1,0,0);
+        position_to_test.cells_player_2[0] = new Hole(1,0,0);
+
+        move = "6-R";
+
+        position_to_verify.cells_player_1[5] = new Hole(0,0,0);
+        position_to_verify.cells_player_2[0] = new Hole(0,0,0);
+
+        position_to_verify.seeds_player_1 = 2;
+
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
+
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -182,33 +237,33 @@ public class GameControlerTest {
         position_to_verify.init(nbSeeds);
         position_to_test.init(nbSeeds);
 
-        position_to_verify.seeds_computer = 0;
-        position_to_verify.seeds_player = 0;
-        position_to_test.seeds_computer = 0;
-        position_to_test.seeds_player = 0;
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
 
         move = "2-R";
 
-        position_to_verify.cells_computer[0] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[1] = new Hole(0,0,0);
-        position_to_verify.cells_computer[2] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[3] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[0] = new Hole(nbSeeds,0,0);
-        position_to_verify.cells_player[1] = new Hole(nbSeeds,0,0);
+        position_to_verify.cells_player_1[0] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[1] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[2] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[3] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[0] = new Hole(nbSeeds,0,0);
+        position_to_verify.cells_player_2[1] = new Hole(nbSeeds,0,0);
 
-        position_to_verify.seeds_computer = 6;
+        position_to_verify.seeds_player_1 = 6;
 
-        position_to_test.cells_player[0] = new Hole(3,2,0);
-        position_to_test.cells_player[1] = new Hole(3,2,0);
+        position_to_test.cells_player_2[0] = new Hole(3,2,0);
+        position_to_test.cells_player_2[1] = new Hole(3,2,0);
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -218,27 +273,57 @@ public class GameControlerTest {
         position_to_verify.init(nbSeeds);
         position_to_test.init(nbSeeds);
 
-        position_to_verify.seeds_computer = 0;
-        position_to_verify.seeds_player = 0;
-        position_to_test.seeds_computer = 0;
-        position_to_test.seeds_player = 0;
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
 
         move = "6-R";
 
-        position_to_verify.cells_computer[5] = new Hole(0,0,0);
-        position_to_verify.cells_player[0] = new Hole(nbSeeds+1,0,0);
-        position_to_verify.cells_player[1] = new Hole(nbSeeds+1,0,0);
-        position_to_verify.cells_player[2] = new Hole(nbSeeds,0,0);
-        position_to_verify.cells_player[3] = new Hole(nbSeeds,0,0);
+        position_to_verify.cells_player_1[5] = new Hole(0,0,0);
+        position_to_verify.cells_player_2[0] = new Hole(nbSeeds+1,0,0);
+        position_to_verify.cells_player_2[1] = new Hole(nbSeeds+1,0,0);
+        position_to_verify.cells_player_2[2] = new Hole(nbSeeds,0,0);
+        position_to_verify.cells_player_2[3] = new Hole(nbSeeds,0,0);
 
-        position_to_verify.seeds_computer = 10;
+        position_to_verify.seeds_player_1 = 10;
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
+
+        //endregion*
+
+        //region coup avec capture avec graine spéciale uniquement
+
+        nbSeeds = 0;
+        position_to_verify.init(nbSeeds);
+        position_to_test.init(nbSeeds);
+
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
+
+        position_to_test.cells_player_1[5] = new Hole(0,0,1);
+        position_to_test.cells_player_2[0] = new Hole(1,1,0);
+
+        move = "6-R-1";
+
+        position_to_verify.cells_player_1[5] = new Hole(0,0,0);
+        position_to_verify.cells_player_2[0] = new Hole(0,0,0);
+
+        position_to_verify.seeds_player_1 = 3;
+
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
+
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -261,21 +346,21 @@ public class GameControlerTest {
 
         move = "1-R-1";
 
-        position_to_verify.cells_computer[0] = new Hole(0,0,0);
-        position_to_verify.cells_computer[1] = new Hole(nbSeeds,nbSeeds,1);
-        position_to_verify.cells_computer[2] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[3] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[0] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[1] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_1[0] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[1] = new Hole(nbSeeds,nbSeeds,1);
+        position_to_verify.cells_player_1[2] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[3] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[0] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[1] = new Hole(nbSeeds,nbSeeds+1,0);
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -290,21 +375,48 @@ public class GameControlerTest {
 
         move = "1-R-7";
 
-        position_to_verify.cells_computer[0] = new Hole(0,0,0);
-        position_to_verify.cells_computer[1] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[2] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[3] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[0] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[1] = new Hole(nbSeeds,nbSeeds,1);
+        position_to_verify.cells_player_1[0] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[1] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[2] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[3] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[0] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[1] = new Hole(nbSeeds,nbSeeds,1);
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
+
+        //endregion
+
+        //region coup avec graine spéciale et mauvaise couleur donnée
+
+        nbSeeds = 0;
+        position_to_verify.init(nbSeeds);
+        position_to_test.init(nbSeeds);
+
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
+
+        position_to_test.cells_player_1[0] = new Hole(1,0,1);
+
+        move = "1-B-1";
+
+        position_to_verify.cells_player_1[1] = new Hole(0,0,1);
+        position_to_verify.cells_player_1[2] = new Hole(1,0,0);
+
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
+
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -321,30 +433,30 @@ public class GameControlerTest {
         position_to_verify.defineSpecialSeed(true,2);
         position_to_test.defineSpecialSeed(true,2);
 
-        position_to_verify.seeds_computer = 0;
-        position_to_verify.seeds_player = 0;
-        position_to_test.seeds_computer = 0;
-        position_to_test.seeds_player = 0;
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
 
         move = "3-R-5";
 
-        position_to_verify.cells_computer[0] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[1] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[2] = new Hole(0,0,0);
-        position_to_verify.cells_computer[3] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds,nbSeeds+1,0);
-        position_to_verify.cells_player[0] = new Hole(0,0,0);
-        position_to_verify.cells_player[1] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[0] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[1] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[2] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[3] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds,nbSeeds+1,0);
+        position_to_verify.cells_player_2[0] = new Hole(0,0,0);
+        position_to_verify.cells_player_2[1] = new Hole(0,0,0);
 
-        position_to_verify.seeds_computer = 10;
+        position_to_verify.seeds_player_1 = 10;
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -357,34 +469,34 @@ public class GameControlerTest {
         position_to_verify.defineSpecialSeed(true,2);
         position_to_test.defineSpecialSeed(true,3);
 
-        position_to_verify.seeds_computer = 0;
-        position_to_verify.seeds_player = 0;
-        position_to_test.seeds_computer = 0;
-        position_to_test.seeds_player = 0;
+        position_to_verify.seeds_player_1 = 0;
+        position_to_verify.seeds_player_2 = 0;
+        position_to_test.seeds_player_1 = 0;
+        position_to_test.seeds_player_2 = 0;
 
         move = "4-R-5";
 
-        position_to_test.cells_player[0] = new Hole(2,2,0);
-        position_to_test.cells_player[1] = new Hole(2,3,0);
+        position_to_test.cells_player_2[0] = new Hole(2,2,0);
+        position_to_test.cells_player_2[1] = new Hole(2,3,0);
 
-        position_to_verify.cells_computer[0] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[1] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[2] = new Hole(nbSeeds,nbSeeds,0);
-        position_to_verify.cells_computer[3] = new Hole(0,0,0);
-        position_to_verify.cells_computer[4] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_computer[5] = new Hole(nbSeeds+1,nbSeeds,0);
-        position_to_verify.cells_player[0] = new Hole(0,3,0);
-        position_to_verify.cells_player[1] = new Hole(0,4,0);
-        position_to_verify.cells_player[2] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[0] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[1] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[2] = new Hole(nbSeeds,nbSeeds,0);
+        position_to_verify.cells_player_1[3] = new Hole(0,0,0);
+        position_to_verify.cells_player_1[4] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_1[5] = new Hole(nbSeeds+1,nbSeeds,0);
+        position_to_verify.cells_player_2[0] = new Hole(0,3,0);
+        position_to_verify.cells_player_2[1] = new Hole(0,4,0);
+        position_to_verify.cells_player_2[2] = new Hole(0,0,0);
 
-        position_to_verify.seeds_computer = 9;
+        position_to_verify.seeds_player_1 = 9;
 
-        position_to_test = GameControler.playMove(position_to_test, computer_play, move);
+        position_to_test = GameControler.playMove(position_to_test, player_one, move);
 
-        Assert.assertArrayEquals(position_to_verify.cells_computer,position_to_test.cells_computer);
-        Assert.assertArrayEquals(position_to_verify.cells_player,position_to_test.cells_player);
-        Assert.assertEquals(position_to_verify.seeds_computer,position_to_test.seeds_computer);
-        Assert.assertEquals(position_to_verify.seeds_player,position_to_test.seeds_player);
+        Assert.assertArrayEquals(position_to_verify.cells_player_1,position_to_test.cells_player_1);
+        Assert.assertArrayEquals(position_to_verify.cells_player_2,position_to_test.cells_player_2);
+        Assert.assertEquals(position_to_verify.seeds_player_1,position_to_test.seeds_player_1);
+        Assert.assertEquals(position_to_verify.seeds_player_2,position_to_test.seeds_player_2);
 
         //endregion
 
@@ -396,23 +508,23 @@ public class GameControlerTest {
     @Test
     void finalPosition() {
         Position pos;
-        boolean computer_play;
+        boolean player_one;
 
         pos = new Position();
-        computer_play = true;
+        player_one = true;
 
         pos.init(0);
 
-        pos.cells_player[0] = new Hole(1,1,1);
+        pos.cells_player_2[0] = new Hole(1,1,1);
 
-        Assert.assertTrue(GameControler.finalPosition(pos, computer_play));
-        Assert.assertFalse(GameControler.finalPosition(pos, !computer_play));
+        Assert.assertTrue(GameControler.finalPosition(pos, player_one));
+        Assert.assertFalse(GameControler.finalPosition(pos, !player_one));
 
-        pos.cells_player[0] = new Hole(0,0,0);
-        pos.cells_computer[0] = new Hole(1,1,1);
+        pos.cells_player_2[0] = new Hole(0,0,0);
+        pos.cells_player_1[0] = new Hole(1,1,1);
 
-        Assert.assertTrue(GameControler.finalPosition(pos, !computer_play));
-        Assert.assertFalse(GameControler.finalPosition(pos, computer_play));
+        Assert.assertTrue(GameControler.finalPosition(pos, !player_one));
+        Assert.assertFalse(GameControler.finalPosition(pos, player_one));
     }
 
     @Test
@@ -1093,6 +1205,20 @@ public class GameControlerTest {
         nb_captured_seeds = GameControler.capture_seeds(board, hole_index, color);
 
         Assert.assertEquals(3,nb_captured_seeds);
+
+        //endregion
+
+        //region capture simple en début de plateau
+
+        for(int i=0;i<board_size;i++){
+            board[i] = new Hole(2,0,0);
+        }
+
+        hole_index = 0;
+        color = GameControler.COLOR_RED;
+        nb_captured_seeds = GameControler.capture_seeds(board, hole_index, color);
+
+        Assert.assertEquals(2,nb_captured_seeds);
 
         //endregion
 

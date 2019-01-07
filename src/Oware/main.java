@@ -6,7 +6,7 @@ public class main{
 
         Position pos = new Position();
         pos.initDefault();
-        pos.cells_player[0].nb_special_seeds = 1;
+        pos.cells_player_2[0].nb_special_seeds = 1;
 
         IHM.level = 1;
 

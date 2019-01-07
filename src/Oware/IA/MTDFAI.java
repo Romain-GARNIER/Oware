@@ -37,28 +37,28 @@ public class MTDFAI {
         return result;
     }
 
-    ArrayList<String> coupPossible(Position pos_current, boolean computer_play){
+    ArrayList<String> coupPossible(Position pos_current, boolean player_one){
         ArrayList<String> coupsPossible = new ArrayList<>();
         ArrayList<String> cellComputer = new ArrayList<>(Arrays.asList("1", "2", "3", "4", "5", "6"));
         ArrayList<String> cellPlayer = new ArrayList<>(Arrays.asList("7", "8", "9", "10", "11", "12"));
         ArrayList<String> couleur = new ArrayList<>(Arrays.asList("R", "B"));
 
-        ArrayList<String> currentCell = (gc.computer_player_one) ? cellComputer : cellPlayer;
+        ArrayList<String> currentCell = (player_one) ? cellComputer : cellPlayer;
 
         for(String cellC : currentCell){
             for(String couleurC : couleur){
                 String move = cellC + "-" + couleurC;
-                int cellCS = (gc.computer_player_one) ? 0 : 6;
-                if(GameControler.containsSpecialSeed(pos_current, computer_play, Integer.parseInt(cellC)-1-cellCS)){
+                int cellCS = (player_one) ? 0 : 6;
+                if(GameControler.containsSpecialSeed(pos_current, player_one, Integer.parseInt(cellC)-1-cellCS)){
                     for(int i=1; i<=3;i++){
                         move = cellC + "-" + couleurC + "-" + i;
-                        if(GameControler.validMove(pos_current, computer_play, move)){
+                        if(GameControler.validMove(pos_current, player_one, move)){
                             coupsPossible.add(move);
                         }
                     }
 
                 }else{
-                    if(GameControler.validMove(pos_current, computer_play, move)){
+                    if(GameControler.validMove(pos_current, player_one, move)){
                         coupsPossible.add(move);
                     }
                 }
