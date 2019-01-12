@@ -4,8 +4,9 @@ import Oware.GameControler;
 import Oware.IHM;
 import Oware.Position;
 
-import java.sql.Array;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
    /*
    function pvs(node, depth, α, β, color)
@@ -25,7 +26,7 @@ import java.util.ArrayList;
      * </pre>
     */
 
-public class PVS extends IAEngine{
+public class PVS {
     private Position posInit;
     private GameControler gc;
 
@@ -34,62 +35,97 @@ public class PVS extends IAEngine{
         this.gc = gc;
     }
 
-    public String pvsStart(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta){
-        String bestCoup = "";
-        double maxValue = -10000;
-        Position pos_next;
-        boolean first = true;
-        double a = alpha;
-        double b = beta;
-        double score;
-        ArrayList<String> coups = coupPossible(pos_current, computer_play);
-        for (String coup : coups){
-            pos_next = gc.playMove(pos_current, computer_play, coup);
-            if (!first){
-                score = -pvs(pos_next, first,  !computer_play, depth + 1, depthMax, -a -1, -a);
-                if (a < score && score < b) score = -pvs (pos_next, first, !computer_play, depth+1, depthMax, -b, -score);
-            }else{
-                score = -pvs(pos_next, first, !computer_play, depth + 1, depthMax, -b, -a);
-                a = Math.max(a, score);
-                if (a >= b) break;
+
+    ArrayList<String> coupPossible(Position pos_current, boolean computer_play){
+        ArrayList<String> coupsPossible = new ArrayList<>();
+        ArrayList<String> cellComputer = new ArrayList<>(Arrays.asList("1", "2", "3", "4", "5", "6"));
+        ArrayList<String> cellPlayer = new ArrayList<>(Arrays.asList("7", "8", "9", "10", "11", "12"));
+        ArrayList<String> couleur = new ArrayList<>(Arrays.asList("R", "B"));
+
+        ArrayList<String> currentCell = (gc.computer_player_one) ? cellComputer : cellPlayer;
+
+        for(String cellC : currentCell){
+            for(String couleurC : couleur){
+                String move = cellC + "-" + couleurC;
+                int cellCS = (gc.computer_player_one) ? 0 : 6;
+                if(GameControler.containsSpecialSeed(pos_current, computer_play, Integer.parseInt(cellC)-1-cellCS)){
+                    for(int i=1; i<=3;i++){
+                        move = cellC + "-" + couleurC + "-" + i;
+                        if(GameControler.validMove(pos_current, computer_play, move)){
+                            coupsPossible.add(move);
+                        }
+                    }
+
+                }else{
+                    if(GameControler.validMove(pos_current, computer_play, move)){
+                        coupsPossible.add(move);
+                    }
+                }
             }
-            if (maxValue < score){
-                maxValue = score;
-                bestCoup = coup;
-            }
-            first = false;
         }
-        return bestCoup;
+
+        return coupsPossible;
     }
 
+    public String PVSStart(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta){
+        MoveWrapper<String> wrapper = new MoveWrapper<>();
 
-    private double pvs(Position pos_current, boolean first, boolean computer_play, int depth, int depthMax, double alpha, double beta){
+        PVS(pos_current, computer_play, depth, depthMax, alpha, beta, wrapper);
+        IHM.log("MinMax :"+wrapper.score,1);
+        return wrapper.move;
+    }
+
+    public double PVSScore(Position pos_current, boolean computer_play, final boolean first, final int depth, final int depthMax, final double alpha, final double beta, double b){
+        double score = -PVS(pos_current, computer_play, depth + 1, depthMax, -b, -alpha, null);
+        if (!first && alpha < score && score < beta){
+            score = -PVS(pos_current, computer_play, depth + 1, depthMax, -beta, -alpha, null);
+        }
+        return score;
+    }
+
+    public double PVS(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta, MoveWrapper<String> wrapper){
         Position pos_next;
-        double score;
-        double a = alpha;
         double b = beta;
+        String bestMoveLocal = null;
+        double bestScore = -10000;
 
         if(GameControler.finalPosition(pos_current, computer_play)){
             int evaluation = GameControler.finalEvaluation(pos_current);
             IHM.log("evaluation : "+evaluation+"\n",3);
-            return evaluation;
+            return -evaluation;
         }
         if (depth == depthMax){
-            return gc.evaluation(posInit, pos_current);
+            int eval = GameControler.evaluation(posInit, pos_current);
+            //System.out.println("PVS eval : " + eval);
+            return -eval;
         }
+
         ArrayList<String> coups = coupPossible(pos_current, computer_play);
-        for (String coup : coups){
+
+
+        double score;
+        boolean first = true;
+        for(String coup : coups){
             pos_next = gc.playMove(pos_current, computer_play, coup);
-            if (!first){
-                score = -pvs(pos_next, first,  !computer_play, depth + 1, depthMax, -a -1, -a);
-                if (a < score && score < b) score = -pvs (pos_next, first, !computer_play, depth+1, depthMax, -b, -score);
-            }else{
-                score = -pvs(pos_next, first, !computer_play, depth + 1, depthMax, -b, -a);
-                a = Math.max(a, score);
-                if (a >= b) break;
+            score = PVSScore(pos_next, !computer_play, first, depth, depthMax, alpha, beta,b);
+            if (score > alpha){
+                alpha = score;
+                bestMoveLocal = coup;
+                bestScore =  score;
+                if (alpha >= beta){
+                    break;
+                }
             }
+            b = alpha + 1;
             first = false;
         }
-        return a;
+        if (wrapper != null) {
+            wrapper.move = bestMoveLocal;
+            wrapper.score = bestScore;
+        }
+        return alpha;
+
+
     }
+
 }

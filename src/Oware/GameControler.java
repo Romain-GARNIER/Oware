@@ -506,6 +506,7 @@ public class GameControler {
         if(cell_player+seeds_player == cell_computer+seeds_computer)
             eval = 0;
 
+
         return eval;
     }
 

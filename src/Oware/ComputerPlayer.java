@@ -7,8 +7,9 @@ public class ComputerPlayer implements Player{
     AlphaBetaCut alphaBetaCut;
     PVS pvs;
     int depth_start = 0;
-    int depth_max = 7;
-    int start = 0;
+    int depth_max = 9;
+    int depth_max_SpeecialSeed = 7;
+    int start = -96;
     int end = 96;
 
     public ComputerPlayer(Position position, GameControler game){
@@ -20,8 +21,9 @@ public class ComputerPlayer implements Player{
     public String chooseMove(Position position) {
         String move;
 
-        move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,start,end);
-        //move = pvs.pvsStart(position,true,depth_start,depth_max,start,end);
+        //move = alphaBetaCut.AlphaBetaCutStart(position,true,depth_start,depth_max,start,end);
+        move = pvs.PVSStart(position,true,depth_start,depth_max,start,end);
+
         IHM.console("coup choisi par le bot : "+move);
 
         return move;
@@ -31,7 +33,7 @@ public class ComputerPlayer implements Player{
     public int chooseStartSpecialSeed(Position position) {
         int hole;
 
-        hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth_start, depth_max, start, end);
+        hole = alphaBetaCut.AlphBetaCutSeed(position, true, depth_start, depth_max_SpeecialSeed, start, end);
 
         return hole;
     }
