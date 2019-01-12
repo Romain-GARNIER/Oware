@@ -68,8 +68,7 @@ public class PVS {
     }
 
     public String PVSStart(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta){
-        MoveWrapper<String> wrapper = new MoveWrapper<>();
-
+        MoveWrapper<String, Double> wrapper = new MoveWrapper<>();
         PVS(pos_current, computer_play, depth, depthMax, alpha, beta, wrapper);
         IHM.log("MinMax :"+wrapper.score,1);
         return wrapper.move;
@@ -83,7 +82,7 @@ public class PVS {
         return score;
     }
 
-    public double PVS(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta, MoveWrapper<String> wrapper){
+    public double PVS(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta, MoveWrapper<String, Double> wrapper){
         Position pos_next;
         double b = beta;
         String bestMoveLocal = null;
@@ -101,7 +100,6 @@ public class PVS {
         }
 
         ArrayList<String> coups = coupPossible(pos_current, computer_play);
-
 
         double score;
         boolean first = true;

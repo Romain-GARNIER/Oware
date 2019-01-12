@@ -1,8 +1,8 @@
 package Oware.IA;
 
-public class MoveWrapper<M> {
+public class MoveWrapper<M, T> {
     M move;
-    double score;
+    T score;
 
     public MoveWrapper() {
     }
