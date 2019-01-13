@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 public class Hole
 {
-
     public int nb_red_seeds;
     public int nb_black_seeds;
     public int nb_special_seeds;

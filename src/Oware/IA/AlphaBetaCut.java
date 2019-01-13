@@ -67,7 +67,7 @@ public class AlphaBetaCut extends IAEngine{
     double AlphaBetaCutValue(Position pos_current, boolean player_one, boolean my_turn, int depth, int depthMax, double alpha, double beta){
         Position pos_next; // In C : created on the stack: = very fast
 
-        if(GameControler.finalPosition(pos_current, player_one && my_turn)){
+        if(GameControler.finalPosition(pos_current, player_one) && my_turn){
             int evaluation = GameControler.finalEvaluation(pos_current, player_one);
             IHM.log("evaluation : "+evaluation+"\n",3);
             return evaluation;
@@ -86,7 +86,8 @@ public class AlphaBetaCut extends IAEngine{
                 pos_next = GameControler.playMove(pos_current, player_one, coup);
                 double value = AlphaBetaCutValue(pos_next, player_one, !my_turn, depth+1, depthMax, alpha, beta);
                 alpha = Math.max(alpha, value);
-                if (alpha >= beta) return beta;
+                if (alpha >= beta)
+                    return beta;
             }
             return alpha;
         }else{
@@ -94,7 +95,8 @@ public class AlphaBetaCut extends IAEngine{
                 pos_next = GameControler.playMove(pos_current, player_one, coup);
                 double value = AlphaBetaCutValue(pos_next, player_one, !my_turn, depth+1, depthMax, alpha, beta);
                 beta = Math.min(beta, value);
-                if(alpha>=beta) return alpha;
+                if(alpha>=beta)
+                    return alpha;
             }
             return beta;
         }

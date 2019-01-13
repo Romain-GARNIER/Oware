@@ -23,10 +23,10 @@ public class GameControler {
         int number = IHM.consoleNextInt();
         if(number == 1){
             player_1 = new HumanPlayer(true);
-            player_2 = new ComputerPlayer(new AlphaBetaCut(this, position), false);
+            player_2 = new ComputerPlayer(new PVS(this, position), false);
         }
         if(number == 2){
-            player_1 = new ComputerPlayer(new AlphaBetaCut(this, position), true);
+            player_1 = new ComputerPlayer(new PVS(this, position), true);
             player_2 = new HumanPlayer(false);
         }
         if(number == 0){

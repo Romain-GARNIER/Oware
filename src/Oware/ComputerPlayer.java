@@ -7,7 +7,7 @@ import Oware.IA.PVS;
 public class ComputerPlayer extends Player{
     IAEngine iaEngine;
     int depth_start = 0;
-    int depth_max = 9;
+    int depth_max = 7;
     int depth_max_SpeecialSeed = 7;
     int start = -96;
     int end = 96;
