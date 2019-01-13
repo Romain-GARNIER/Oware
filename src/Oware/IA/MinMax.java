@@ -20,15 +20,17 @@ public class MinMax extends IAEngine {
         Position pos_next;
         int maxValue = -10000;
 
-        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0,1 ,2 ,3 ,4 ,5));
         ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
+        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
 
         for (int cell : cellPossible){
             Position posFictif = pos_current.clone();
-            if(computer_play)
+            if(cell < 6)
                 posFictif.cells_player_1[cell].setSpecialSeed(1);
-            else
-                posFictif.cells_player_2[cell].setSpecialSeed(1);
+            else{
+                int pos_cell = cell % 6;
+                posFictif.cells_player_2[pos_cell].setSpecialSeed(1);
+            }
             for (String coup : coupPossible) {
                 pos_next = GameControler.playMove(posFictif, computer_play, coup);
                 int value = minMaxValue(pos_next, !computer_play, depth + 1, depthMax);

@@ -50,6 +50,10 @@ public class Hole
         this.nb_special_seeds = nb_seeds;
     }
 
+    public void addSpecialSeed(){
+        this.nb_special_seeds++;
+    }
+
     public int getNbSeeds(String color){
         switch (color){
             case GameControler.COLOR_RED :

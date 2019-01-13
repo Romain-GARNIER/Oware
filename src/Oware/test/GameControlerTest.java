@@ -34,8 +34,8 @@ public class GameControlerTest {
 
         //region Premier trou avec graines spéciale
 
-        position_to_test.defineSpecialSeed(true,0);
-        position_to_test.defineSpecialSeed(false,0);
+        position_to_test.defineSpecialSeed(0);
+        position_to_test.defineSpecialSeed(0);
 
         //Cas simple graine spéciale en première position
         move = "1-R-1";
@@ -341,8 +341,8 @@ public class GameControlerTest {
         position_to_verify.init(nbSeeds);
         position_to_test.init(nbSeeds);
 
-        position_to_verify.defineSpecialSeed(true,0);
-        position_to_test.defineSpecialSeed(true,0);
+        position_to_verify.defineSpecialSeed(0);
+        position_to_test.defineSpecialSeed(0);
 
         move = "1-R-1";
 
@@ -370,8 +370,8 @@ public class GameControlerTest {
         position_to_verify.init(nbSeeds);
         position_to_test.init(nbSeeds);
 
-        position_to_verify.defineSpecialSeed(true,0);
-        position_to_test.defineSpecialSeed(true,0);
+        position_to_verify.defineSpecialSeed(0);
+        position_to_test.defineSpecialSeed(0);
 
         move = "1-R-7";
 
@@ -430,8 +430,8 @@ public class GameControlerTest {
         position_to_verify.init(nbSeeds);
         position_to_test.init(nbSeeds);
 
-        position_to_verify.defineSpecialSeed(true,2);
-        position_to_test.defineSpecialSeed(true,2);
+        position_to_verify.defineSpecialSeed(2);
+        position_to_test.defineSpecialSeed(2);
 
         position_to_verify.seeds_player_1 = 0;
         position_to_verify.seeds_player_2 = 0;
@@ -466,8 +466,8 @@ public class GameControlerTest {
         position_to_verify.init(nbSeeds);
         position_to_test.init(nbSeeds);
 
-        position_to_verify.defineSpecialSeed(true,2);
-        position_to_test.defineSpecialSeed(true,3);
+        position_to_verify.defineSpecialSeed(2);
+        position_to_test.defineSpecialSeed(3);
 
         position_to_verify.seeds_player_1 = 0;
         position_to_verify.seeds_player_2 = 0;

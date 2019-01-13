@@ -46,11 +46,13 @@ public class Position {
         }
     }
 
-    public void defineSpecialSeed(boolean player_one, int hole){
-        if(player_one)
-            cells_player_1[hole].setSpecialSeed(1);
-        else
-            cells_player_2[hole].setSpecialSeed(1);
+    public void defineSpecialSeed(int hole){
+        if(hole < 6)
+            cells_player_1[hole].addSpecialSeed();
+        else{
+            hole = hole%6;
+            cells_player_2[hole].addSpecialSeed();
+        }
     }
 
     public String toString(){

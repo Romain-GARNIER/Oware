@@ -40,14 +40,16 @@ public class PVS extends IAEngine{
         int bestCell = 0;
         Position pos_next;
         double maxValue = -10000;
-        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0,1 ,2 ,3 ,4 ,5));
+        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
 
         for (int cell : cellPossible){
             Position posFictif = pos_current.clone();
-            if(player_one)
+            if(cell < 6)
                 posFictif.cells_player_1[cell].setSpecialSeed(1);
-            else
-                posFictif.cells_player_2[cell].setSpecialSeed(1);
+            else{
+                int pos_cell = cell % 6;
+                posFictif.cells_player_2[pos_cell].setSpecialSeed(1);
+            }
             MoveWrapper<String, Double> wrapper = new MoveWrapper<>();
             pvs(pos_current, player_one, true, depth, depthMax, alpha, beta, wrapper);
             if (maxValue < wrapper.score || (maxValue == wrapper.score && new Random().nextInt() % 2 == 0)) {

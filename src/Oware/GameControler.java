@@ -41,30 +41,35 @@ public class GameControler {
 
         IHM.console("Joueur 1 : Choisissez un trou pour la graine spéciale :");
         hole = player_1.chooseStartSpecialSeed(position);
-        position.defineSpecialSeed(true, hole-1);
+        position.defineSpecialSeed(hole-1);
         IHM.console("Joueur 1 a placé sa graine spéciale dans le trou "+hole);
 
         IHM.console("Joueur 2 : Choisissez un trou pour la graine spéciale :");
         hole = player_2.chooseStartSpecialSeed(position);
-        position.defineSpecialSeed(false, hole-1);
+        position.defineSpecialSeed( hole-1);
         IHM.console("Joueur 2 a placé sa graine spéciale dans le trou "+hole);
     }
 
     public void startGame(){
-        while (!GameControler.finalPosition(position, true)){
+        boolean run_game = true;
+        while (run_game){
             String move;
 
-            IHM.console("---------------------------------------------------------------------------------------------------------------");
-            IHM.console(position.toString());
-            IHM.console("Joueur 1 :");
+            if(!GameControler.finalPosition(position, true)){
+                IHM.console("---------------------------------------------------------------------------------------------------------------");
+                IHM.console(position.toString());
+                IHM.console("Joueur 1 :");
 
-            move = player_1.chooseMove(position);
+                move = player_1.chooseMove(position);
 
-            position = GameControler.playMove(position,true,move);
+                position = GameControler.playMove(position,true,move);
 
-            IHM.console(position.toString());
+                IHM.console(position.toString());
+            }else{
+                run_game = false;
+            }
 
-            if(!GameControler.finalPosition(position, false)){
+            if(!GameControler.finalPosition(position, false) && run_game){
                 IHM.console("---------------------------------------------------------------------------------------------------------------");
                 IHM.console("Joueur 2 :");
 
@@ -73,6 +78,8 @@ public class GameControler {
                 position = GameControler.playMove(position,false,move);
 
                 //System.out.println("MinMax : "+minMax.minMaxValue(position,player_one,0,3));
+            }else{
+                run_game = false;
             }
         }
     }
@@ -384,72 +391,6 @@ public class GameControler {
         return 0;
     }
 
-    public static String collect_seeds(Hole[] plateau, boolean red_seeds, boolean black_seeds, int hole, ArrayList<Integer> nb_seeds, boolean special_seeds) {
-        int nb_red_seeds, nb_black_seeds, nb_special_seeds;
-
-        nb_red_seeds = plateau[hole].getNbSeeds(COLOR_RED);
-        nb_black_seeds = plateau[hole].getNbSeeds(COLOR_BLACK);
-        nb_special_seeds = plateau[hole].getNbSeeds(SPECIAL_SEED);
-        nb_seeds.add(nb_red_seeds);
-        nb_seeds.add(nb_black_seeds);
-        nb_seeds.add(nb_special_seeds);
-        if (red_seeds && black_seeds && special_seeds) {
-            if (nb_red_seeds > 0 && nb_red_seeds > 0) {
-                if ((nb_red_seeds == 1 || nb_red_seeds == 2) && (nb_black_seeds == 1 || nb_black_seeds == 2)) {
-                    plateau[hole].setNbSeeds(COLOR_RED, 0);
-                    plateau[hole].setNbSeeds(COLOR_BLACK, 0);
-                    plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                    return SPECIAL_SEED;
-                }
-            }
-            if (nb_red_seeds > 0 && (nb_red_seeds == 1 || nb_red_seeds == 2)) {
-                plateau[hole].setNbSeeds(COLOR_RED, 0);
-                plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                return COLOR_RED;
-            }
-            if (nb_black_seeds > 0 && (nb_black_seeds == 1 || nb_black_seeds == 2)) {
-                plateau[hole].setNbSeeds(COLOR_BLACK, 0);
-                plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                return COLOR_BLACK;
-            }
-        }else {
-            if (red_seeds && black_seeds && !special_seeds) {
-                if (nb_red_seeds > 0 && nb_red_seeds > 0) {
-                    if ((nb_red_seeds == 2 || nb_red_seeds == 3) && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
-                        plateau[hole].setNbSeeds(COLOR_RED, 0);
-                        plateau[hole].setNbSeeds(COLOR_BLACK, 0);
-                        plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                        return SPECIAL_SEED;
-                    }
-                }
-                if (nb_red_seeds > 0 && (nb_red_seeds == 2 || nb_red_seeds == 3)) {
-                    plateau[hole].setNbSeeds(COLOR_RED, 0);
-                    plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                    return COLOR_RED;
-                }
-                if (nb_black_seeds > 0 && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
-                    plateau[hole].setNbSeeds(COLOR_BLACK, 0);
-                    plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                    return COLOR_BLACK;
-                }
-            } else {
-                if (red_seeds && nb_red_seeds > 0 && (nb_red_seeds == 2 || nb_red_seeds == 3)) {
-                    plateau[hole].setNbSeeds(COLOR_RED, 0);
-                    if (special_seeds)
-                        plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                    return COLOR_RED;
-                }
-                if (black_seeds && nb_black_seeds > 0 && (nb_black_seeds == 2 || nb_black_seeds == 3)) {
-                    plateau[hole].setNbSeeds(COLOR_BLACK, 0);
-                    if (special_seeds)
-                        plateau[hole].setNbSeeds(SPECIAL_SEED, 0);
-                    return COLOR_BLACK;
-                }
-            }
-        }
-        return "-1";
-    }
-
     public static int evaluation(Position posInit, Position pos, boolean player_one){
         int eval = 0;
 
@@ -541,10 +482,11 @@ public class GameControler {
         int scorePlayer1 = totalSeeds(1);
         int scorePlayer2 = totalSeeds(2);
 
+        if(scorePlayer1 == scorePlayer2)
+            return 0;
         if(scorePlayer1 > scorePlayer2)
             return 1;
         return 2;
-
     }
 
     public int totalSeeds(int player){
