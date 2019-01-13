@@ -527,9 +527,9 @@ public class GameControler {
         }
 
         if(cell_player+seeds_player > cell_computer+seeds_computer)
-            eval = -96;
+            eval = -1000;
         if(cell_player+seeds_player < cell_computer+seeds_computer)
-            eval = 96;
+            eval = 1000;
         if(cell_player+seeds_player == cell_computer+seeds_computer)
             eval = 0;
 
