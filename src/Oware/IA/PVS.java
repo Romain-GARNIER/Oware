@@ -83,12 +83,11 @@ public class PVS extends IAEngine{
 
         if(GameControler.finalPosition(pos_current, player_one) && my_turn){
             int evaluation = GameControler.finalEvaluation(pos_current, player_one);
-            IHM.log("evaluation : "+evaluation+"\n",3);
             return -evaluation;
         }
         if (depth == depthMax){
             int eval = GameControler.evaluation(posInit, pos_current, player_one);
-            //System.out.println("pvs eval : " + eval);
+            System.out.println("pvs eval : " + eval);
             return -eval;
         }
 
@@ -102,7 +101,7 @@ public class PVS extends IAEngine{
             if (score > alpha){
                 alpha = score;
                 bestMoveLocal = coup;
-                bestScore =  score;
+                bestScore = score;
                 if (alpha >= beta){
                     break;
                 }

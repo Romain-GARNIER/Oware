@@ -31,7 +31,7 @@ public class GameControler {
         }
         if(number == 0){
             player_1 = new ComputerPlayer(new AlphaBetaCut(this, position),true);
-            player_2 = new ComputerPlayer(new AlphaBetaCut(this, position),false);
+            player_2 = new ComputerPlayer(new PVS(this, position),false);
 //            player_2 = new ComputerPlayer(new AlphaBetaCut(this, position),false);
         }
     }

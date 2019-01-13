@@ -9,8 +9,8 @@ public class ComputerPlayer extends Player{
     int depth_start = 0;
     int depth_max = 7;
     int depth_max_SpeecialSeed = 7;
-    int start = -1000;
-    int end = 1000;
+    int start = -10000;
+    int end = 10000;
     int TIME_LIMIT_MILLIS = 2000;
 
     public ComputerPlayer(IAEngine iaEngine, boolean player_one){
