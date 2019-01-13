@@ -87,7 +87,6 @@ public class PVS extends IAEngine{
         }
         if (depth == depthMax){
             int eval = GameControler.evaluation(posInit, pos_current, player_one);
-            System.out.println("pvs eval : " + eval);
             return -eval;
         }
 
