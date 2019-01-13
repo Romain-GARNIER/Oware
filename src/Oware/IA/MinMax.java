@@ -4,74 +4,101 @@ import Oware.GameControler;
 import Oware.IHM;
 import Oware.Position;
 
-public class MinMax {
-    GameControler gameControler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
-    private Position posInit;
-    private int depthMax;
+public class MinMax extends IAEngine {
 
     public MinMax(GameControler gameControler, Position posInit){
-        this.gameControler = gameControler;
-        this.posInit = posInit;
+        super(gameControler, posInit);
     }
 
-    int minMaxValue(Position pos_current, boolean computer_play, int depth, int depthMax){
+    @Override
+    public int selectSpecialSeed(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta){
+        int bestCell = 0;
+        Position pos_next;
+        int maxValue = -10000;
+
+        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0,1 ,2 ,3 ,4 ,5));
+        ArrayList<String> coupPossible = coupPossible(pos_current, computer_play);
+
+        for (int cell : cellPossible){
+            Position posFictif = pos_current.clone();
+            if(computer_play)
+                posFictif.cells_player_1[cell].setSpecialSeed(1);
+            else
+                posFictif.cells_player_2[cell].setSpecialSeed(1);
+            for (String coup : coupPossible) {
+                pos_next = GameControler.playMove(posFictif, computer_play, coup);
+                int value = minMaxValue(pos_next, !computer_play, depth + 1, depthMax);
+                //System.out.println(value);
+                if (maxValue < value || (maxValue == value && new Random().nextInt() % 2 == 0)) {
+                    maxValue = value;
+                    bestCell = cell;
+                }
+            }
+        }
+        return bestCell;
+    }
+
+    int minMaxValue(Position pos_current, boolean player_one, int depth, int depthMax){
 
         //System.out.println("depth : "+depth);
-        //System.out.println("computer : "+computer_play);
+        //System.out.println("computer : "+player_one);
         //System.out.println(pos_current.toString(true));
-        // computer_play is true if the computer has to play and false otherwise
+        // player_one is true if the computer has to play and false otherwise
         int[] tab_values_red = new int[6];
         int[] tab_values_black = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast
-        if (GameControler.finalPosition(pos_current, computer_play)){
+        if (GameControler.finalPosition(pos_current, player_one)){
             // WRITE the code: returns VALMAX (=96) if the computer wins, -96 if it loses; 0 if draw
-            for (int i = 0; i < pos_current.cells_player.length; i++){
-                pos_current.seeds_player += pos_current.cells_player[i].totalSeeds();
+            for (int i = 0; i < pos_current.cells_player_2.length; i++){
+                pos_current.seeds_player_2 += pos_current.cells_player_2[i].totalSeeds();
             }
 
-            for (int i = 0; i < pos_current.cells_computer.length; i++){
-                pos_current.seeds_computer += pos_current.cells_computer[i].totalSeeds();
+            for (int i = 0; i < pos_current.cells_player_1.length; i++){
+                pos_current.seeds_player_1 += pos_current.cells_player_1[i].totalSeeds();
             }
 
-            if(pos_current.seeds_computer > pos_current.seeds_player)
+            if(pos_current.seeds_player_1 > pos_current.seeds_player_2)
                 return 96;
-            if(pos_current.seeds_computer < pos_current.seeds_player)
+            if(pos_current.seeds_player_1 < pos_current.seeds_player_2)
                 return -96;
-            if(pos_current.seeds_computer == pos_current.seeds_player)
+            if(pos_current.seeds_player_1 == pos_current.seeds_player_2)
                 return 0;
         }
         if (depth == depthMax) {
-            int evaluation = GameControler.evaluation(posInit,pos_current);
+            int evaluation = GameControler.evaluation(posInit,pos_current, player_one);
             IHM.log("evaluation : "+evaluation+"\n",3);
             return evaluation;
             // the simplest evealution fucntion is the difference of the taken seeds
         }
         for(int i=0;i<6;i++){ // /!\ Question : on essaie de faire 6 coups (parcourt du camp) ou 12 coups (parcourt du plateau) ?
             // we play the move i
-            // WRITE function validMove(pos_current, computer_play,i)
+            // WRITE function validMove(pos_current, player_one,i)
             // it checks whether we can select the seeds in cell i and play (if there is no seed the function returns false)
             String move = (i+1)+"-R";
-            if (GameControler.validMove(pos_current, computer_play,move)){
-                // WRITE function playMove(&pos_next,pos_current, computer_play,i)
+            if (GameControler.validMove(pos_current, player_one,move)){
+                // WRITE function playMove(&pos_next,pos_current, player_one,i)
                 // we play the move i from pos_current and obtain the new position pos_next
-                pos_next = GameControler.playMove(pos_current, computer_play,move);
+                pos_next = GameControler.playMove(pos_current, player_one,move);
                 // pos_next is the new current poisition and we change the player
-                tab_values_red[i]=minMaxValue(pos_next,!computer_play,depth+1,depthMax);
+                tab_values_red[i]=minMaxValue(pos_next,!player_one,depth+1,depthMax);
             } else {
-                if (computer_play) tab_values_red[i]=-100;
+                if (player_one) tab_values_red[i]=-100;
                 else tab_values_red[i]=+100;
             }
 
             move = (i+1)+"-B";
-            if (GameControler.validMove(pos_current, computer_play,move)){
-                // WRITE function playMove(&pos_next,pos_current, computer_play,i)
+            if (GameControler.validMove(pos_current, player_one,move)){
+                // WRITE function playMove(&pos_next,pos_current, player_one,i)
                 // we play the move i from pos_current and obtain the new position pos_next
-                pos_next = GameControler.playMove(pos_current, computer_play,move);
+                pos_next = GameControler.playMove(pos_current, player_one,move);
                 // pos_next is the new current poisition and we change the player
-                tab_values_black[i]=minMaxValue(pos_next,!computer_play,depth+1,depthMax);
+                tab_values_black[i]=minMaxValue(pos_next,!player_one,depth+1,depthMax);
             } else {
-                if (computer_play) tab_values_black[i]=-100;
+                if (player_one) tab_values_black[i]=-100;
                 else tab_values_black[i]=+100;
             }
         }
@@ -104,7 +131,7 @@ public class MinMax {
             IHM.log("MinMax :"+res,1);
             res = indice;
         }else{
-            if (computer_play){
+            if (player_one){
                 // WRITE the code: res contains the MAX of tab_values
                 for(int i=0;i<tab_values_red.length;i++){
                     if(res_red < tab_values_red[i])
@@ -146,40 +173,40 @@ public class MinMax {
         return res;
     }
 
-
-    String minMaxMove(Position pos_current, boolean computer_play, int depth, int depthMax){
+    @Override
+    public String start(Position pos_current, boolean player_one, int depth, int depthMax, double alpha, double beta){
 
         //System.out.println("depth : "+depth);
-        //System.out.println("computer : "+computer_play);
+        //System.out.println("computer : "+player_one);
         //System.out.println(pos_current.toString(true));
-        // computer_play is true if the computer has to play and false otherwise
+        // player_one is true if the computer has to play and false otherwise
         int[] tab_values_red = new int[6];
         int[] tab_values_black = new int[6];
         Position pos_next = new Position(); // In C : created on the stack: = very fast
         for(int i=0;i<6;i++){ // /!\ Question : on essaie de faire 6 coups (parcourt du camp) ou 12 coups (parcourt du plateau) ?
             // we play the move i
-            // WRITE function validMove(pos_current, computer_play,i)
+            // WRITE function validMove(pos_current, player_one,i)
             // it checks whether we can select the seeds in cell i and play (if there is no seed the function returns false)
             String move = (i+1)+"-R";
-            if (GameControler.validMove(pos_current, computer_play,move)){
-                // WRITE function playMove(&pos_next,pos_current, computer_play,i)
+            if (GameControler.validMove(pos_current, player_one,move)){
+                // WRITE function playMove(&pos_next,pos_current, player_one,i)
                 // we play the move i from pos_current and obtain the new position pos_next
-                pos_next = GameControler.playMove(pos_current, computer_play,move);
+                pos_next = GameControler.playMove(pos_current, player_one,move);
                 // pos_next is the new current poisition and we change the player
-                tab_values_red[i]=minMaxValue(pos_next,!computer_play,depth+1,depthMax);
+                tab_values_red[i]=minMaxValue(pos_next,!player_one,depth+1,depthMax);
             } else {
-                if (computer_play) tab_values_red[i]=-100;
+                if (player_one) tab_values_red[i]=-100;
                 else tab_values_red[i]=+100;
             }
             move = (i+1)+"-B";
-            if (GameControler.validMove(pos_current, computer_play,move)){
-                // WRITE function playMove(&pos_next,pos_current, computer_play,i)
+            if (GameControler.validMove(pos_current, player_one,move)){
+                // WRITE function playMove(&pos_next,pos_current, player_one,i)
                 // we play the move i from pos_current and obtain the new position pos_next
-                pos_next = GameControler.playMove(pos_current, computer_play,move);
+                pos_next = GameControler.playMove(pos_current, player_one,move);
                 // pos_next is the new current poisition and we change the player
-                tab_values_black[i]=minMaxValue(pos_next,!computer_play,depth+1,depthMax);
+                tab_values_black[i]=minMaxValue(pos_next,!player_one,depth+1,depthMax);
             } else {
-                if (computer_play) tab_values_black[i]=-100;
+                if (player_one) tab_values_black[i]=-100;
                 else tab_values_black[i]=+100;
             }
         }
@@ -202,7 +229,7 @@ public class MinMax {
         }
 
         int n = 1;
-        if(!gameControler.computer_player_one)
+        if(!player_one)
             n=7;
 
         if(res_red > res_black){

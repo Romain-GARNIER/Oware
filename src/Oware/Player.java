@@ -1,9 +1,9 @@
 package Oware;
 
-public interface Player {
-    public String name = "Player";
+public abstract class Player {
+    public boolean player_one;
 
-    public String chooseMove(Position position);
+    public abstract String chooseMove(Position position);
 
-    public int chooseStartSpecialSeed(Position position);
+    public abstract int chooseStartSpecialSeed(Position position);
 }

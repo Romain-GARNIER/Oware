@@ -7,6 +7,7 @@ import Oware.Position;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
    /*
    function pvs(node, depth, α, β, color)
@@ -26,45 +27,42 @@ import java.util.Arrays;
      * </pre>
     */
 
-public class PVS {
-    private Position posInit;
-    private GameControler gc;
 
-    public PVS(Position posInit, GameControler gc) {
-        this.posInit = posInit;
-        this.gc = gc;
+public class PVS extends IAEngine{
+
+    public PVS(GameControler gc, Position posInit) {
+        super(gc,posInit);
     }
 
 
-    ArrayList<String> coupPossible(Position pos_current, boolean computer_play){
-        ArrayList<String> coupsPossible = new ArrayList<>();
-        ArrayList<String> cellComputer = new ArrayList<>(Arrays.asList("1", "2", "3", "4", "5", "6"));
-        ArrayList<String> cellPlayer = new ArrayList<>(Arrays.asList("7", "8", "9", "10", "11", "12"));
-        ArrayList<String> couleur = new ArrayList<>(Arrays.asList("R", "B"));
+    @Override
+    public int selectSpecialSeed(Position pos_current, boolean player_one, int depth, int depthMax, double alpha, double beta){
+        int bestCell = 0;
+        Position pos_next;
+        double maxValue = -10000;
+        boolean first = true;
+        ArrayList<Integer> cellPossible = new ArrayList<>(Arrays.asList(0,1 ,2 ,3 ,4 ,5));
+        ArrayList<String> coupPossible = coupPossible(pos_current, player_one);
 
-        ArrayList<String> currentCell = (gc.computer_player_one) ? cellComputer : cellPlayer;
-
-        for(String cellC : currentCell){
-            for(String couleurC : couleur){
-                String move = cellC + "-" + couleurC;
-                int cellCS = (gc.computer_player_one) ? 0 : 6;
-                if(GameControler.containsSpecialSeed(pos_current, computer_play, Integer.parseInt(cellC)-1-cellCS)){
-                    for(int i=1; i<=3;i++){
-                        move = cellC + "-" + couleurC + "-" + i;
-                        if(GameControler.validMove(pos_current, computer_play, move)){
-                            coupsPossible.add(move);
-                        }
-                    }
-
-                }else{
-                    if(GameControler.validMove(pos_current, computer_play, move)){
-                        coupsPossible.add(move);
-                    }
+        for (int cell : cellPossible){
+            Position posFictif = pos_current.clone();
+            if(player_one)
+                posFictif.cells_player_1[cell].setSpecialSeed(1);
+            else
+                posFictif.cells_player_2[cell].setSpecialSeed(1);
+            for (String coup : coupPossible) {
+                pos_next = GameControler.playMove(posFictif, true, coup);
+                double value = pvs(pos_next,first,player_one, false, depth + 1, depthMax, alpha, beta);
+                //System.out.println(value);
+                if (maxValue < value || (maxValue == value && new Random().nextInt() % 2 == 0)) {
+                    maxValue = value;
+                    bestCell = cell;
                 }
             }
         }
-
-        return coupsPossible;
+        if(maxValue == -10000)
+            bestCell = 0;
+        return bestCell+1;
     }
 
     public String PVSStart(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta){
@@ -88,8 +86,8 @@ public class PVS {
         String bestMoveLocal = null;
         double bestScore = -10000;
 
-        if(GameControler.finalPosition(pos_current, computer_play)){
-            int evaluation = GameControler.finalEvaluation(pos_current);
+        if(GameControler.finalPosition(pos_current, my_turn)){
+            int evaluation = GameControler.finalEvaluation(pos_current, player_one && my_turn);
             IHM.log("evaluation : "+evaluation+"\n",3);
             return -evaluation;
         }
