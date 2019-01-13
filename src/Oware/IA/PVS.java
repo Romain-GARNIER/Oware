@@ -4,6 +4,7 @@ import Oware.GameControler;
 import Oware.IHM;
 import Oware.Position;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -26,11 +27,13 @@ import java.util.Random;
      * </pre>
     */
 
+
 public class PVS extends IAEngine{
 
     public PVS(GameControler gc, Position posInit) {
         super(gc,posInit);
     }
+
 
     @Override
     public int selectSpecialSeed(Position pos_current, boolean player_one, int depth, int depthMax, double alpha, double beta){
@@ -62,72 +65,63 @@ public class PVS extends IAEngine{
         return bestCell+1;
     }
 
-    @Override
-    public String start(Position pos_current, boolean player_one, int depth, int depthMax, double alpha, double beta){
-        String bestCoup = "";
-        double maxValue = -10000;
-        Position pos_next;
-        boolean first = true;
-        double a = alpha;
-        double b = beta;
-        double score;
-        ArrayList<String> coups = coupPossible(pos_current, player_one);
-        for (String coup : coups){
-            pos_next = gc.playMove(pos_current, player_one, coup);
-            if (!first){
-                score = -pvs(pos_next, first, player_one,  false, depth + 1, depthMax, -a -1, -a);
-                if (a < score && score < b)
-                    score = -pvs (pos_next, first, player_one, false, depth+1, depthMax, -b, -score);
-                if(score == -10000)
-                    bestCoup = coups.get(0);
-            }else{
-                score = -pvs(pos_next, first, player_one,false, depth + 1, depthMax, -b, -a);
-                a = Math.max(a, score);
-                if(score == -10000)
-                    bestCoup = coups.get(0);
-                if (a >= b) break;
-            }
-            if (maxValue < score){
-                maxValue = score;
-                bestCoup = coup;
-            }
-            first = false;
-        }
-        if(maxValue == -10000)
-            bestCoup = coups.get(0);
-        IHM.log("MinMax :"+maxValue,1);
-        return bestCoup;
+    public String PVSStart(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta){
+        MoveWrapper<String, Double> wrapper = new MoveWrapper<>();
+        PVS(pos_current, computer_play, depth, depthMax, alpha, beta, wrapper);
+        IHM.log("MinMax :"+wrapper.score,1);
+        return wrapper.move;
     }
 
+    public double PVSScore(Position pos_current, boolean computer_play, final boolean first, final int depth, final int depthMax, final double alpha, final double beta, double b){
+        double score = -PVS(pos_current, computer_play, depth + 1, depthMax, -b, -alpha, null);
+        if (!first && alpha < score && score < beta){
+            score = -PVS(pos_current, computer_play, depth + 1, depthMax, -beta, -alpha, null);
+        }
+        return score;
+    }
 
-    private double pvs(Position pos_current, boolean first, boolean player_one, boolean my_turn, int depth, int depthMax, double alpha, double beta){
+    public double PVS(Position pos_current, boolean computer_play, int depth, int depthMax, double alpha, double beta, MoveWrapper<String, Double> wrapper){
         Position pos_next;
-        double score;
-        double a = alpha;
         double b = beta;
+        String bestMoveLocal = null;
+        double bestScore = -10000;
 
         if(GameControler.finalPosition(pos_current, my_turn)){
             int evaluation = GameControler.finalEvaluation(pos_current, player_one && my_turn);
             IHM.log("evaluation : "+evaluation+"\n",3);
-            return evaluation;
+            return -evaluation;
         }
         if (depth == depthMax){
-            return gc.evaluation(posInit, pos_current, player_one);
+            int eval = GameControler.evaluation(posInit, pos_current);
+            //System.out.println("PVS eval : " + eval);
+            return -eval;
         }
-        ArrayList<String> coups = coupPossible(pos_current, player_one);
-        for (String coup : coups){
-            pos_next = gc.playMove(pos_current, player_one, coup);
-            if (!first){
-                score = -pvs(pos_next, first, player_one, !my_turn, depth + 1, depthMax, -a -1, -a);
-                if (a < score && score < b)
-                    score = -pvs (pos_next, first, player_one, !my_turn, depth+1, depthMax, -b, -score);
-            }else{
-                score = -pvs(pos_next, first, player_one, !my_turn, depth + 1, depthMax, -b, -a);
-                a = Math.max(a, score);
-                if (a >= b) break;
+
+        ArrayList<String> coups = coupPossible(pos_current, computer_play);
+
+        double score;
+        boolean first = true;
+        for(String coup : coups){
+            pos_next = gc.playMove(pos_current, computer_play, coup);
+            score = PVSScore(pos_next, !computer_play, first, depth, depthMax, alpha, beta,b);
+            if (score > alpha){
+                alpha = score;
+                bestMoveLocal = coup;
+                bestScore =  score;
+                if (alpha >= beta){
+                    break;
+                }
             }
+            b = alpha + 1;
             first = false;
         }
-        return a;
+        if (wrapper != null) {
+            wrapper.move = bestMoveLocal;
+            wrapper.score = bestScore;
+        }
+        return alpha;
+
+
     }
+
 }

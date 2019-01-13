@@ -7,9 +7,11 @@ import Oware.IA.PVS;
 public class ComputerPlayer extends Player{
     IAEngine iaEngine;
     int depth_start = 0;
-    int depth_max = 7;
-    int start = 0;
+    int depth_max = 9;
+    int depth_max_SpeecialSeed = 7;
+    int start = -96;
     int end = 96;
+    int TIME_LIMIT_MILLIS = 2000;
 
     public ComputerPlayer(IAEngine iaEngine, boolean player_one){
         this.iaEngine = iaEngine;
@@ -19,6 +21,7 @@ public class ComputerPlayer extends Player{
     @Override
     public String chooseMove(Position position) {
         String move;
+
 
         move = iaEngine.start(position,player_one,depth_start,depth_max,start,end);
         //move = pvs.pvsStart(position,true,depth_start,depth_max,start,end);
@@ -30,6 +33,7 @@ public class ComputerPlayer extends Player{
     @Override
     public int chooseStartSpecialSeed(Position position) {
         int hole;
+
 
         hole = iaEngine.selectSpecialSeed(position, player_one, depth_start, depth_max, start, end);
 
